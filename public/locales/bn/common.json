@@ -42,7 +42,16 @@
   },
 
   "hero": {
-    "getStarted": "শুরু করুন"
+    "title": "সম্মিলিত বিনিয়োগের মাধ্যমে জীবনকে ক্ষমতায়ন",
+    "subtitle": "কৃষি, রিয়েল এস্টেট এবং নৈতিক উদ্যোগের মাধ্যমে টেকসই ভবিষ্যৎ গড়ে তুলতে আমাদের ৫০+ সদস্যের কমিউনিটিতে যোগ দিন।",
+    "getStarted": "শুরু করুন",
+    "exploreProjects": "প্রকল্প দেখুন",
+    "joinInvestor": "বিনিয়োগকারী হিসেবে যোগ দিন",
+    "stats": {
+      "members": "৫০+ সদস্য",
+      "projects": "১০+ প্রজেক্ট",
+      "transparency": "১০০% স্বচ্ছতা"
+    }
   },
 
   "about": {
@@ -115,9 +124,14 @@
     "emailLabel": "ইমেইল",
     "addressValue": "ঢাকা, বাংলাদেশ",
     "button": "বার্তা পাঠান",
+    "fullName": "সম্পূর্ণ নাম",
+    "emailAddress": "ইমেইল ঠিকানা",
+    "yourMessage": "আপনার বার্তা",
+    "sending": "পাঠানো হচ্ছে...",
+    "sendMessage": "বার্তা পাঠান",
+    "headquarters": "প্রধান কার্যালয়",
     "name": "নাম",
     "message": "বার্তা",
-    "sending": "পাঠানো হচ্ছে...",
     "success": "বার্তা সফলভাবে পাঠানো হয়েছে!",
     "error": "বার্তা পাঠাতে ব্যর্থ হয়েছে।"
   },
@@ -144,7 +158,18 @@
       }
     ],
     "askQuestion": "সরাসরি জিজ্ঞাসা করুন",
-    "confussion": "এখনো কোনো প্রশ্ন আছে?"
+    "confussion": "এখনো কোনো প্রশ্ন আছে?",
+    "commonInquiries": "সাধারণ জিজ্ঞাসা",
+    "frequentlyAsked": "সচরাচর জিজ্ঞাসিত প্রশ্ন",
+    "stillHaveQuestions": "এখনো কোনো প্রশ্ন আছে?",
+    "askUsAnything": "সরাসরি জিজ্ঞাসা করুন"
+  },
+  "home": {
+    "empowering": "কমিউনিটিকে ক্ষমতায়ন",
+    "leadership": "আমাদের নেতৃত্ব",
+    "dedicatedCommittee": "নিবেদিত পরিচালনা কমিটি",
+    "getInTouch": "যোগাযোগ করুন",
+    "connectWithUs": "আজই আমাদের সাথে যুক্ত হন"
   },
 
   "legal": {
@@ -217,7 +242,9 @@
     "needInsights": "আরও তথ্য প্রয়োজন?",
     "exportDesc": "CSV হিসেবে আর্থিক ডেটা ডাউনলোড করুন।",
     "viewAllFunds": "বিস্তারিত দেখুন",
-    "manageProjects": "প্রকল্প পরিচালনা"
+    "manageProjects": "প্রকল্প পরিচালনা",
+    "myBalance": "আমার ব্যক্তিগত ব্যালেন্স",
+    "availableForWithdraw": "উত্তোলনযোগ্য ব্যালেন্স"
   },
   "funds": {
     "title": "তহবিল ব্যবস্থাপনা",
@@ -430,11 +457,20 @@
     "viewDetails": "বিস্তারিত দেখুন",
     "invest": "বিনিয়োগ",
     "members": "সদস্যবৃন্দ",
+    "exploreImpact": "আমাদের প্রভাব অন্বেষণ করুন",
+    "searchPlaceholder": "প্রকল্প খুঁজুন...",
+    "allProjects": "সকল প্রকল্প",
+    "categories": "বিভাগ:",
+    "allCategories": "সকল বিভাগ",
+    "agriculture": "কৃষি",
+    "fishFarming": "মৎস্য চাষ",
+    "realEstate": "রিয়েল এস্টেট",
+    "showingResults": "{{count}} টি ফলাফল দেখানো হচ্ছে",
     "statusLabels": {
-    "ongoing": "সক্রিয়",
-    "upcoming": "আসন্ন",
-    "expired": "সম্পন্ন"
-  }
+      "ongoing": "সক্রিয়",
+      "upcoming": "আসন্ন",
+      "completed": "সম্পন্ন"
+    }
   },
   "projectDetails": {
   "backToDashboard": "প্রকল্প ড্যাশবোর্ড ফিরে যান",

@@ -17,7 +17,8 @@ import {
   Users,
   Briefcase,
   Layers,
-  ShieldCheck
+  ShieldCheck,
+  Wallet
 } from "lucide-react";
 
 import { Card } from "@/components/ui/card";
@@ -52,7 +53,7 @@ export default function DashboardPage() {
     skip: !userFromState
   });
 
-  const user = userResponse?.data || userResponse;
+  const user = userResponse?.data?.user || userResponse?.data || userFromState;
   const stats = statsResponse?.data;
 
   useEffect(() => {
@@ -257,6 +258,29 @@ export default function DashboardPage() {
               <h3 className="text-xl font-black">{stats?.totalUsers || 0}</h3>
               <p className="text-[10px] text-muted-foreground mt-1 font-bold uppercase">
                 {t("dashboard.registered") || "REGISTERED"}
+              </p>
+            </div>
+          </div>
+        </Card>
+
+        {/* 💰 MY BALANCE CARD (Requirement 10) */}
+        <Card className="p-6 overflow-hidden relative group hover:shadow-xl transition-all duration-300 border-none bg-gradient-to-br from-indigo-500/10 to-purple-500/10 dark:from-indigo-500/5 dark:to-purple-500/5 sm:col-span-2 lg:col-span-1">
+          <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
+            <Wallet size={80} />
+          </div>
+          <div className="flex items-center gap-4 relative z-10">
+            <div className="p-3 bg-indigo-600 rounded-xl text-white shadow-lg shadow-indigo-500/20">
+              <Wallet size={24} />
+            </div>
+            <div>
+              <p className="text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest">
+                {t("dashboard.myBalance") || "My Account Balance"}
+              </p>
+              <h3 className="text-xl font-black text-indigo-700 dark:text-indigo-300">
+                ৳{(user?.accountBalance || 0).toLocaleString()}
+              </h3>
+              <p className="text-[10px] text-muted-foreground mt-1 font-bold uppercase">
+                {t("dashboard.availableForWithdraw") || "AVAILABLE CREDIT"}
               </p>
             </div>
           </div>

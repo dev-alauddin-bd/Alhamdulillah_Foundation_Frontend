@@ -10,7 +10,7 @@ The frontend of the Alhamdulillah Foundation platform is a modern, high-performa
 - **💰 Financial Transparency**: Real-time fund tracking, income/expense reports, and invoice generation.
 - **💳 Multi-Gateway Payments**: 
   - **SSLCommerz** for domestic transactions in Bangladesh.
-  - **Stripe** for international payments.
+  - **SSLCommerz** for secure local payments (bKash, Nagad, etc.).
   - Manual Bkash verification flow.
 - **🌍 Internationalization**: Supports multiple languages (English/Bengali) using i18next.
 - **📊 Interactive Charts**: Visual data representation using Recharts.
@@ -60,7 +60,7 @@ public/           # Static assets (images, fonts)
 3. Create a `.env.local` file in the root:
    ```env
    NEXT_PUBLIC_BASE_URL=http://localhost:5000/api
-   NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=your_stripe_key
+   # No public stripe key needed for SSLCommerz (server-side redirect)
    ```
 4. Run the development server:
    ```bash

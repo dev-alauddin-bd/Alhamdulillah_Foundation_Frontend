@@ -19,7 +19,7 @@ const ROLE_PERMISSIONS: Record<string, string[]> = {
   "/dashboard/notices": ["SUPER_ADMIN", "ADMIN"],
   "/dashboard/projects": ["SUPER_ADMIN", "ADMIN"],
   "/dashboard/banners": ["SUPER_ADMIN", "ADMIN"],
-  "/dashboard/management": ["SUPER_ADMIN", "ADMIN"],
+  "/dashboard/management": ["SUPER_ADMIN", "ADMIN", "MEMBER"],
 };
 
 export async function proxy(request: NextRequest) {

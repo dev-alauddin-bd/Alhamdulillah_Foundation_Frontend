@@ -46,7 +46,16 @@
   },
 
   "hero": {
-    "getStarted": "Get Started"
+    "title": "EMPOWERING LIVES THROUGH COLLABORATIVE INVESTMENT",
+    "subtitle": "Join our community of over 50 members in building sustainable futures through agriculture, real estate, and ethical ventures.",
+    "getStarted": "Get Started",
+    "exploreProjects": "Explore Projects",
+    "joinInvestor": "Join as Investor",
+    "stats": {
+      "members": "50+ Members",
+      "projects": "10+ Projects",
+      "transparency": "100% Transparency"
+    }
   },
 
   "about": {
@@ -119,9 +128,14 @@
     "emailLabel": "Email",
     "addressValue": "Dhaka, Bangladesh",
     "button": "Send Message",
+    "fullName": "Full Name",
+    "emailAddress": "Email Address",
+    "yourMessage": "Your Message",
+    "sending": "SENDING...",
+    "sendMessage": "SEND MESSAGE",
+    "headquarters": "Headquarters",
     "name": "Name",
     "message": "Message",
-    "sending": "Sending...",
     "success": "Message sent successfully!",
     "error": "Failed to send message."
   },
@@ -148,7 +162,18 @@
       }
     ],
     "askQuestion": "Ask us directly",
-    "confussion": "Still have more questions?"
+    "confussion": "Still have more questions?",
+    "commonInquiries": "Common Inquiries",
+    "frequentlyAsked": "Frequently Asked Questions",
+    "stillHaveQuestions": "Still have some questions in mind?",
+    "askUsAnything": "Ask Us Anything"
+  },
+  "home": {
+    "empowering": "Empowering Communities",
+    "leadership": "Our Leadership",
+    "dedicatedCommittee": "Dedicated Committee Members",
+    "getInTouch": "Get In Touch",
+    "connectWithUs": "Connect With Us Today"
   },
 
   "legal": {
@@ -432,12 +457,20 @@
     "viewDetails": "View Details",
     "invest": "Invest",
     "members": "Members",
-  
-  "statusLabels": {
-    "ongoing": "Ongoing",
-    "upcoming": "Upcoming",
-    "expired": "Completed"
-  }
+    "exploreImpact": "EXPLORE OUR IMPACT",
+    "searchPlaceholder": "Search projects...",
+    "allProjects": "All Projects",
+    "categories": "Categories:",
+    "allCategories": "All Categories",
+    "agriculture": "Agriculture",
+    "fishFarming": "Fish Farming",
+    "realEstate": "Real Estate",
+    "showingResults": "Showing {{count}} results",
+    "statusLabels": {
+      "ongoing": "Ongoing",
+      "upcoming": "Upcoming",
+      "completed": "Completed"
+    }
   },
   "projectDetails": {
   "backToDashboard": "Back to Project Dashboard",

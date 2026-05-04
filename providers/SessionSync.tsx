@@ -54,8 +54,8 @@ export const SessionSync = ({ children }: SessionSyncProps) => {
   useEffect(() => {
     const pathname = window.location.pathname;
     
-    if (serverUser?.data && user) {
-        const sRole = serverUser.data.role;
+    if (serverUser?.data?.user && user) {
+        const sRole = serverUser.data.user.role;
         const lRole = user.role;
 
         // Condition 1: Role in DB is different from what we have in our Redux store/Token

@@ -10,6 +10,7 @@ import { ThemeProvider } from "@/components/shared/ThemeProvider";
 import Script from "next/script";
 import { ToastContainer } from "react-toastify";
 import { Toaster } from "@/components/ui/sonner";
+import LenisProvider from "@/providers/LenisProvider";
 
 const geist = Geist({
   subsets: ["latin"],
@@ -81,7 +82,9 @@ export default function RootLayout({
               enableSystem
               disableTransitionOnChange
             >
-              {children}
+              <LenisProvider>
+                {children}
+              </LenisProvider>
               <Toaster />
          {/* 🔔 TOASTER (ONE TIME) */}
         <ToastContainer

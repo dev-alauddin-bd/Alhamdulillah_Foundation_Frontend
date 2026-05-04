@@ -8,7 +8,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CheckCircle, ArrowRight, UserPlus, ShieldCheck, Mail, Lock } from "lucide-react";
-import { useSignUpUserMutation } from "@/redux/features/auth/authApi";
+import { useSignUpUserMutation, useSendRegistrationOtpMutation } from "@/redux/features/auth/authApi";
 import { useDispatch } from "react-redux";
 import { setUser } from "@/redux/features/auth/authSlice";
 import { z } from "zod";
@@ -16,9 +16,13 @@ import Image from "next/image";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 
+
 export default function RegisterPage() {
   const router = useRouter();
-  const [signUpUser, { isLoading }] = useSignUpUserMutation();
+  const [signUpUser, { isLoading: isRegistering }] = useSignUpUserMutation();
+  const [sendRegistrationOtp, { isLoading: isSendingOtp }] = useSendRegistrationOtpMutation();
+  const [otpSent, setOtpSent] = useState(false);
+  const [otpCode, setOtpCode] = useState("");
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
@@ -59,12 +63,30 @@ export default function RegisterPage() {
       return;
     }
 
+    if (!otpSent) {
+      // Step 1: Send OTP
+      try {
+        await sendRegistrationOtp(formData.email).unwrap();
+        setOtpSent(true);
+        toast.info("আপনার ইমেইলে একটি ওটিপি পাঠানো হয়েছে।");
+      } catch (err: any) {
+        toast.error(err?.data?.message || "ওটিপি পাঠাতে ব্যর্থ হয়েছে।");
+      }
+      return;
+    }
+
+    // Step 2: Register with OTP
+    if (!otpCode || otpCode.length !== 6) {
+        toast.error("সঠিক ৬ ডিজিটের ওটিপি দিন");
+        return;
+    }
+
     try {
       const res = await signUpUser({
-        firstName: formData.firstName,
-        lastName: formData.lastName,
+        name: `${formData.firstName} ${formData.lastName}`,
         email: formData.email,
         password: formData.password,
+        otpCode: otpCode,
       }).unwrap();
 
       dispatch(
@@ -75,166 +97,167 @@ export default function RegisterPage() {
       );
 
       toast.success(res?.message || "Registration successful 🎉");
-
-      // ✅ Immediate redirect (toast will still show)
       router.push("/dashboard/membership");
     } catch (err: any) {
-      toast.error(err?.data?.message || "Something went wrong");
+      toast.error(err?.data?.message || "ওটিপি ভুল বা মেয়াদ শেষ হয়ে গেছে");
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center mt-12">
-      <Card className="w-full shadow-[0_20px_50px_rgba(0,0,0,0.1)] rounded-3xl border-none overflow-hidden  bg-card">
+    <div className="min-h-screen flex items-center justify-center mt-12 py-12 px-4">
+      <Card className="w-full max-w-2xl shadow-2xl rounded-[2.5rem] border border-border/50 overflow-hidden bg-background/80 backdrop-blur-xl">
   
-  {/* ===== LOGO + LANGUAGE ===== */}
-                      <div className=" flex flex-col items-center gap-4">
-                     
-                          {/* LOGO */}
-                          <div className="h-24 w-24 relative rounded-2xl bg-primary/10 flex items-center justify-center">
-                            <Image
-                              src="/logo.png"
-                              alt="Logo"
-                              fill
-                              className="object-contain p-3"
-                            />
-                          </div>
-              
-                 
-                        <div className="text-center">
-                          <h1 className="text-2xl font-bold tracking-tight">
-                            {t("auth.register.registerTitle")}
-                          </h1>
+        {/* ===== LOGO + LANGUAGE ===== */}
+        <div className="p-12 flex flex-col items-center gap-6">
+          <div className="h-24 w-24 relative rounded-3xl bg-primary/10 flex items-center justify-center">
+            <Image
+              src="/logo.png"
+              alt="Logo"
+              fill
+              className="object-contain p-3"
+            />
+          </div>
+          
+          <div className="text-center">
+            <h1 className="text-3xl font-black tracking-tight mb-2">
+              {t("auth.register.registerTitle", { defaultValue: "Join Our Mission" })}
+            </h1>
+            <p className="text-muted-foreground">Become a part of our foundation today</p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="w-full space-y-8">
+            <div className="space-y-6">
+              {!otpSent ? (
+                <>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-2">{t("auth.register.firstName")}</Label>
+                        <div className="relative">
+                          <UserPlus className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                          <Input
+                            name="firstName"
+                            value={formData.firstName}
+                            placeholder="First Name"
+                            onChange={handleChange}
+                            className="h-14 pl-12 rounded-2xl glass border-white/10"
+                            required
+                          />
                         </div>
                       </div>
-              
-        {/* Right Side - Form */}
-        <div className="flex p-8 bg-card">
-    
-          
+                      <div className="space-y-2">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-2">{t("auth.register.lastName")}</Label>
+                        <div className="relative">
+                          <UserPlus className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                          <Input
+                            name="lastName"
+                            value={formData.lastName}
+                            placeholder="Last Name"
+                            onChange={handleChange}
+                            className="h-14 pl-12 rounded-2xl glass border-white/10"
+                            required
+                          />
+                        </div>
+                      </div>
+                  </div>
+                
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-5">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground">{t("auth.register.firstName")}</Label>
+                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-2">{t("auth.register.email")}</Label>
                     <div className="relative">
-                      <UserPlus className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                       <Input
-                        name="firstName"
-                        value={formData.firstName}
-                        placeholder="First Name"
+                        type="email"
+                        name="email"
+                        value={formData.email}
+                        placeholder="Type your email"
                         onChange={handleChange}
-                        className="h-12 pl-10 rounded-xl border-input bg-background/50 focus:bg-background transition-all font-medium"
+                        className="h-14 pl-12 rounded-2xl glass border-white/10"
                         required
                       />
                     </div>
                   </div>
-                  <div className="space-y-2">
-                    <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground">{t("auth.register.lastName")}</Label>
-                    <div className="relative">
-                      <UserPlus className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                      <Input
-                        name="lastName"
-                        value={formData.lastName}
-                        placeholder="Last Name"
-                        onChange={handleChange}
-                        className="h-12 pl-10 rounded-xl border-input bg-background/50 focus:bg-background transition-all font-medium"
-                        required
-                      />
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-2">{t("auth.register.password")}</Label>
+                      <div className="relative">
+                        <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                        <Input
+                          type="password"
+                          name="password"
+                          placeholder="Min 6 characters"
+                          value={formData.password}
+                          onChange={handleChange}
+                          className="h-14 pl-12 rounded-2xl glass border-white/10"
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-2"> {t("auth.register.confirmPassword")}</Label>
+                      <div className="relative">
+                        <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                        <Input
+                          type="password"
+                          placeholder="Repeat password"
+                          name="confirmPassword"
+                          value={formData.confirmPassword}
+                          onChange={handleChange}
+                          className="h-14 pl-12 rounded-2xl glass border-white/10"
+                          required
+                        />
+                      </div>
                     </div>
                   </div>
-              </div>
-             
-
-              <div className="space-y-2">
-                <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground">{t("auth.register.email")}</Label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <Input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    placeholder="Type your email"
-                    onChange={handleChange}
-                    className="h-12 pl-10 rounded-xl border-input bg-background/50 focus:bg-background transition-all font-medium"
-                    required
-                  />
+                </>
+              ) : (
+                <div className="space-y-6 animate-in slide-in-from-top-4 duration-500">
+                    <div className="text-center p-6 bg-primary/5 rounded-[2rem] border border-primary/10">
+                        <Mail className="mx-auto text-primary mb-3" size={32} />
+                        <p className="text-sm font-bold text-primary">ইমেইল ভেরিফিকেশন</p>
+                        <p className="text-[10px] text-muted-foreground mt-1">আপনার {formData.email} ইমেইলে একটি কোড পাঠানো হয়েছে</p>
+                    </div>
+                    <div className="space-y-2">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-2">ওটিপি কোড দিন</Label>
+                        <Input
+                            placeholder="৬ ডিজিট কোড"
+                            value={otpCode}
+                            onChange={(e) => setOtpCode(e.target.value)}
+                            className="h-16 text-center text-2xl font-black tracking-[0.5em] rounded-2xl glass border-white/10"
+                            required
+                        />
+                    </div>
+                    <Button 
+                        variant="ghost" 
+                        onClick={() => setOtpSent(false)}
+                        className="w-full text-[10px] font-black uppercase tracking-widest"
+                    >
+                        তথ্য পরিবর্তন করুন
+                    </Button>
                 </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground">{t("auth.register.password")}</Label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                    <Input
-                      type="password"
-                      name="password"
-                      placeholder="Type your password"
-                      value={formData.password}
-                      onChange={handleChange}
-                      className="h-12 pl-10 rounded-xl border-input bg-background/50 focus:bg-background transition-all font-medium"
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground"> {t("auth.register.confirmPassword")}</Label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                    <Input
-                      type="password"
-                      placeholder="Type your confirm password"
-                      name="confirmPassword"
-                      value={formData.confirmPassword}
-                      onChange={handleChange}
-                      className="h-12 pl-10 rounded-xl border-input bg-background/50 focus:bg-background transition-all font-medium"
-                      required
-                    />
-                  </div>
-                </div>
-              </div>
+              )}
             </div>
-
-            <div className="relative my-4">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t border-border/50" />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-background px-2 text-foreground/50">
-                  Or join with
-                </span>
-              </div>
-            </div>
-
-            <Button
-              variant="outline"
-              type="button"
-              onClick={() => {
-                window.location.href = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/google`;
-              }}
-              className="w-full h-12 rounded-xl font-medium border-border/50 hover:bg-muted/50 mb-4"
-            >
-              <svg className="mr-2 h-4 w-4" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="google" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512">
-                <path fill="currentColor" d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z"></path>
-              </svg>
-              Continue with Google
-            </Button>
 
             <Button
               type="submit"
-              disabled={isLoading}
-              className="w-full h-14 text-base font-black bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20 rounded-2xl transition-all hover:scale-[1.02] active:scale-95"
+              disabled={isRegistering || isSendingOtp}
+              className="w-full h-16 text-lg font-black bg-primary hover:bg-primary/90 shadow-glow rounded-2xl"
             >
-              {isLoading ? t("auth.register.creatingAccount") : t("auth.register.joinFoundation")}
+              {isSendingOtp || isRegistering ? (
+                <div className="flex items-center gap-3">
+                  <span className="animate-spin h-5 w-5 border-2 border-white/20 border-t-white rounded-full"></span>
+                  একটু অপেক্ষা করুন...
+                </div>
+              ) : (
+                !otpSent ? t("auth.register.joinFoundation", { defaultValue: "CREATE ACCOUNT" }) : "ভেরিফাই এবং সাইনআপ"
+              )}
             </Button>
 
-            <p className="text-center text-sm font-bold text-muted-foreground mt-6">
-              {t("auth.register.alreadyHaveAccount")}{" "}
-              <Link href="/login" className="text-primary hover:underline">
-                {t("auth.register.signIn")}
+            <p className="text-center text-sm text-muted-foreground mt-8">
+              {t("auth.register.alreadyHaveAccount", { defaultValue: "Already have an account?" })}{" "}
+              <Link href="/login" className="font-black text-primary hover:underline uppercase tracking-widest text-xs">
+                {t("auth.register.signIn", { defaultValue: "Sign In" })}
               </Link>
             </p>
           </form>

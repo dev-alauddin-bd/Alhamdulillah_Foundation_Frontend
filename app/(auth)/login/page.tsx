@@ -29,7 +29,6 @@ export default function LoginPage() {
 
   const [loginUser, { isLoading }] = useLoginUserMutation();
 
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -43,12 +42,12 @@ export default function LoginPage() {
           accessToken: res?.data?.accessToken,
         })
       );    
-      toast.success(res?.message);
-
+      toast.success(res?.message || "Login successful");
       router.push("/dashboard");
     } catch (err: any) {
-      setError(err?.data?.message || t("auth.invalid"));
-      toast.error(err?.data?.message || t("auth.invalid"));
+      const errMsg = err?.data?.message || t("auth.invalid");
+      setError(errMsg);
+      toast.error(errMsg);
     }
   };
 
@@ -68,15 +67,14 @@ export default function LoginPage() {
                 className="object-contain p-3"
               />
             </div>
-
           </div>
 
           <div className="text-center">
             <h1 className="text-2xl font-bold tracking-tight">
-              {t("auth.login.loginTitle")}
+              {t("auth.login.loginTitle", { defaultValue: "Welcome Back" })}
             </h1>
             <p className="text-sm text-foreground/60 mt-1">
-              {t("auth.login.loginSubtitle")}
+              {t("auth.login.loginSubtitle", { defaultValue: "Please enter your details to sign in" })}
             </p>
           </div>
         </div>
@@ -94,10 +92,12 @@ export default function LoginPage() {
           <div className="space-y-1.5">
             <Label>{t("auth.login.email")}</Label>
             <Input
+              type="email"
               placeholder="Type your email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="h-11 rounded-xl"
+              required
             />
           </div>
 
@@ -109,6 +109,7 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="h-11 rounded-xl"
+              required
             />
           </div>
 
@@ -117,47 +118,19 @@ export default function LoginPage() {
             disabled={isLoading}
             className="w-full h-11 rounded-xl font-semibold bg-gradient-to-r from-primary to-emerald-600 shadow-lg shadow-primary/25"
           >
-            {isLoading ? t("auth.login.signingIn") : t("auth.login.signIn")}
+            {isLoading ? "Signing in..." : t("auth.login.signIn")}
           </Button>
         </form>
         
-        <div className="relative my-8">
-          <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t border-border/50" />
-          </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-background px-2 text-foreground/50">
-              Or continue with
-            </span>
-          </div>
-        </div>
-
-        <Button
-          variant="outline"
-          type="button"
-          onClick={() => {
-            window.location.href = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/google`;
-          }}
-          className="w-full h-11 rounded-xl font-medium border-border/50 hover:bg-muted/50"
-        >
-          <svg className="mr-2 h-4 w-4" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="google" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512">
-            <path fill="currentColor" d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z"></path>
-          </svg>
-          Continue with Google
-        </Button>
-
-        {/* ===== FOOTER ===== */}
         <div className="mt-8 text-center text-sm text-foreground/60">
-          {t("auth.login.noAccount")}{" "}
+          {t("auth.login.noAccount", { defaultValue: "Don't have an account?" })}{" "}
           <Link
             href="/register"
             className="font-semibold text-primary hover:underline"
           >
-            {t("auth.login.apply")}
+            {t("auth.login.apply", { defaultValue: "Apply Now" })}
           </Link>
         </div>
-
-
       </Card>
     </div>
   );

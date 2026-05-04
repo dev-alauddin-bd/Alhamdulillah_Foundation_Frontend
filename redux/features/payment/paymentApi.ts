@@ -4,7 +4,10 @@ import baseApi from "@/redux/baseApi";
 // types/payment.ts
 
 export enum PaymentMethod {
-  SSLCOMMERZ = "SSLCOMMERZ",
+  BKASH_GATEWAY = "BKASH_GATEWAY",
+  BKASH_MANUAL = "BKASH_MANUAL",
+  NAGAD_MANUAL = "NAGAD_MANUAL",
+  ROCKET_MANUAL = "ROCKET_MANUAL",
 }
 
 export enum PaymentStatus {
@@ -76,11 +79,21 @@ export const paymentApi = baseApi.injectEndpoints({
       providesTags: ["Payment"],
     }),
 
+    // Submit manual payment details
+    submitManualPayment: builder.mutation({
+      query: (data: { paymentId: string; transactionId: string; senderNumber?: string; screenshot?: string }) => ({
+        url: "/payments/manual-submit",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["Payment"],
+    }),
+
     // Approve a payment (admin)
     approvePayment: builder.mutation({
       query: (paymentId: string) => ({
-        url: `/payments/${paymentId}/approve`,
-        method: "PATCH",
+        url: `/payments/approve/${paymentId}`,
+        method: "POST",
       }),
       invalidatesTags: ["Payment"],
     }),
@@ -93,4 +106,5 @@ export const {
   useGetPaymentsQuery,
   useGetMyPaymentsQuery,
   useApprovePaymentMutation,
+  useSubmitManualPaymentMutation,
 } = paymentApi;

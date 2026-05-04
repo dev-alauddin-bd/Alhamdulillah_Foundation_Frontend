@@ -12,71 +12,50 @@ export default function ProjectsSection() {
   const { data: projectsData } = useGetProjectsQuery({});
 
   return (
-    <section
-      id="projects"
-      className="
-        py-8 sm:py-12 md:py-24
-        px-4 md:px-8
-      "
-    >
-      {/* HEADER */}
-      <div
-        className="
-          text-center max-w-3xl mx-auto
-          mb-8 sm:mb-12 md:mb-20
-        "
-      >
-        <h2
-          className="
-            font-black
-            text-xl sm:text-2xl md:text-5xl
-            mb-3 sm:mb-4 md:mb-6
-            bg-gradient-to-r from-primary via-emerald-600 to-amber-500
-            bg-clip-text text-transparent
-          "
-        >
-          {t("project.title", {
-            defaultValue: "We'd Love to Hear From You",
-          })}
-        </h2>
+    <section id="projects" className="py-24 md:py-32 relative overflow-hidden bg-mesh">
+      <div className="container mx-auto px-6 relative z-10">
+        {/* HEADER */}
+        <div className="max-w-3xl mb-16 md:mb-24" data-aos="fade-up">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass border-white/10 mb-6">
+            <span className="w-2 h-2 bg-primary rounded-full animate-pulse" />
+            <span className="text-[10px] font-bold tracking-widest uppercase opacity-80">Our Impact</span>
+          </div>
+          
+          <h2 className="text-4xl md:text-6xl font-black tracking-tighter leading-none mb-6">
+            ACTIVE <span className="text-gradient">COMMUNITY</span> <br />
+            PROJECTS
+          </h2>
 
-        <p
-          className="
-            text-sm sm:text-base md:text-lg
-            text-muted-foreground
-            leading-relaxed
-          "
-        >
-          {t("project.desc", {
-            defaultValue:
-              "Have a question or want to get involved? Reach out to us and we'll get back to you as soon as possible.",
-          })}
-        </p>
-      </div>
+          <p className="text-lg text-muted-foreground leading-relaxed max-w-2xl">
+            {t("project.desc", {
+              defaultValue:
+                "Explore our ongoing initiatives designed to provide sustainable support and create lasting change in local communities.",
+            })}
+          </p>
+        </div>
 
-      {/* PROJECT GRID */}
-      <div className="container mx-auto grid gap-6 sm:gap-8 md:grid-cols-2 lg:grid-cols-4">
-        {projectsData?.data?.slice(0, 4).map((project: any) => (
-          <ProjectCard key={project?._id} project={project} />
-        ))}
-      </div>
+        {/* PROJECT GRID */}
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+          {projectsData?.data?.slice(0, 4).map((project: any, index: number) => (
+            <div key={project?._id} data-aos="fade-up" data-aos-delay={index * 100}>
+              <ProjectCard project={project} />
+            </div>
+          ))}
+        </div>
 
-      {/* CTA */}
-      <div className="text-center mt-8 sm:mt-12">
-        <Link href="/projects">
-          <Button
-            variant="outline"
-            className="
-              rounded-full
-              px-5 py-2
-              sm:px-8 sm:py-3
-              text-sm sm:text-base
-            "
-          >
-            {t("project.exploreAll")}
-            <ArrowRight className="ml-2 w-4 h-4" />
-          </Button>
-        </Link>
+        {/* CTA */}
+        <div className="text-center mt-16 md:mt-24" data-aos="fade-up">
+          <Link href="/projects">
+            <Button
+              variant="outline"
+              size="lg"
+              className="rounded-full px-10 h-14 font-bold glass hover:bg-white/5 transition-all group"
+            >
+              {t("project.exploreAll")}
+              <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </Button>
+          </Link>
+        </div>
       </div>
     </section>
   );

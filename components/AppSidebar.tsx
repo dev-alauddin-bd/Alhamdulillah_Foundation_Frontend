@@ -144,7 +144,7 @@ export const sidebarItems: SidebarItem[] = [
     key: "sidebar.management",
     url: "/dashboard/management",
     icon: ShieldCheck,
-    roles: [UserRole.SUPER_ADMIN, UserRole.ADMIN],
+    roles: [UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.MEMBER],
   },
   {
     title: "Votes",

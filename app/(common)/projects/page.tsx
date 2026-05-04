@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useGetProjectsQuery } from "@/redux/features/project/projectApi";
-
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -12,10 +11,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Search, Filter, X } from "lucide-react";
+import { Search, Filter, X, LayoutGrid, Briefcase, Sprout, Fish, Home } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import ProjectCard from "@/components/projects/ProjectCard";
 import { AFPagination } from "@/components/shared/AFPagination";
+import { cn } from "@/lib/utils";
 
 export default function ProjectsPage() {
   const { t } = useTranslation();
@@ -29,7 +29,7 @@ export default function ProjectsPage() {
     status: statusFilter === "all" ? undefined : statusFilter,
     category: categoryFilter === "all" ? undefined : categoryFilter,
     page,
-    limit: 8,
+    limit: 12, // Increased limit for smaller cards
   });
 
   const handleReset = () => {
@@ -40,145 +40,162 @@ export default function ProjectsPage() {
   };
 
   return (
-    <div className="container mx-auto py-10 mt-32 px-4">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        {/* LEFT COMPONENT: FILTERS & SEARCH */}
-        <div className="lg:col-span-3 space-y-6">
-          <div className="bg-card/50 backdrop-blur-md p-6 rounded-2xl border border-border shadow-sm top-24 sticky">
-            <div className="flex items-center gap-2 mb-6">
-              <Filter className="h-5 w-5 text-primary" />
-              <h3 className="font-bold text-lg">{t("common.filters", { defaultValue: "Filters" })}</h3>
+    <div className="min-h-screen bg-background pb-20">
+      {/* 1. PREMIUM HEADER */}
+      <section className="relative pt-40 pb-20 overflow-hidden border-b border-white/5">
+        <div className="absolute inset-0 bg-mesh opacity-30" />
+        <div className="container mx-auto px-6 relative z-10 flex flex-col lg:flex-row items-center justify-between gap-12">
+          <div className="flex-1 text-left space-y-6 animate-in fade-in slide-in-from-left-8 duration-1000">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass border-white/10">
+              <span className="w-2 h-2 bg-primary rounded-full animate-pulse shadow-[0_0_10px_var(--primary)]" />
+              <span className="text-[10px] font-black tracking-[0.3em] uppercase opacity-90 text-white">
+                {t("common.projects")}
+              </span>
+            </div>
+            <h1 className="text-5xl md:text-8xl font-black tracking-tighter text-white leading-[0.85]">
+              {t("projects.exploreImpact")}
+            </h1>
+            <p className="text-lg md:text-xl text-muted-foreground max-w-xl">
+              {t("project.desc", { defaultValue: "Empowering communities through sustainable, transparent, and collaborative investments." })}
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* 2. PREMIUM HORIZONTAL FILTER BAR */}
+      <section className="container mx-auto px-6 -mt-12 relative z-20">
+        <div className="glass p-4 md:p-6 rounded-[2rem] md:rounded-[3rem] border-white/10 shadow-2xl backdrop-blur-2xl">
+          <div className="flex flex-col gap-6">
+            
+            {/* Top Row: Search & Status */}
+            <div className="flex flex-col md:flex-row items-center gap-4">
+              {/* Search */}
+              <div className="relative flex-1 w-full group">
+                <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-all duration-300" />
+                <Input
+                  placeholder={t("projects.searchPlaceholder")}
+                  className="pl-14 h-14 md:h-16 bg-white/5 border-white/10 rounded-2xl md:rounded-full text-lg focus:ring-primary/20 focus:border-primary/50 transition-all placeholder:text-muted-foreground/50"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
+
+              {/* Status Tabs */}
+              <div className="flex p-1.5 bg-white/5 rounded-2xl md:rounded-full border border-white/10 w-full md:w-auto overflow-x-auto no-scrollbar">
+                {["all", "ongoing", "upcoming", "completed"].map((s) => (
+                  <button
+                    key={s}
+                    onClick={() => setStatusFilter(s)}
+                    className={cn(
+                      "px-6 h-11 md:h-12 rounded-xl md:rounded-full text-[10px] font-black uppercase tracking-widest transition-all duration-300 whitespace-nowrap",
+                      statusFilter === s 
+                        ? "bg-primary text-white shadow-lg shadow-primary/20" 
+                        : "text-muted-foreground hover:text-white hover:bg-white/5"
+                    )}
+                  >
+                    {s === "all" ? t("projects.allProjects") : t("projects.statusLabels." + s)}
+                  </button>
+                ))}
+              </div>
             </div>
 
-            <div className="space-y-6">
-              {/* Search */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground/80">{t("common.search")}</label>
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder={t("common.searchPlaceholder", { defaultValue: "Search projects..." })}
-                    className="pl-10 h-10 bg-background/50 border-input/50 focus:bg-background transition-all"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
+            {/* Bottom Row: Categories & Reset */}
+            <div className="flex flex-col md:flex-row items-center justify-between gap-6 pt-2 border-t border-white/5">
+              <div className="flex items-center gap-4 overflow-x-auto no-scrollbar w-full md:w-auto pb-2 md:pb-0">
+                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 hidden md:block">{t("projects.categories")}</span>
+                <div className="flex gap-2">
+                  {[
+                    { id: "all", label: t("projects.allCategories"), icon: LayoutGrid },
+                    { id: "Agriculture", label: t("projects.agriculture"), icon: Sprout },
+                    { id: "Fish Farming", label: t("projects.fishFarming"), icon: Fish },
+                    { id: "Real Estate", label: t("projects.realEstate"), icon: Home }
+                  ].map((cat) => (
+                    <button
+                      key={cat.id}
+                      onClick={() => setCategoryFilter(cat.id)}
+                      className={cn(
+                        "px-5 py-2.5 rounded-xl border transition-all duration-300 flex items-center gap-2 whitespace-nowrap",
+                        categoryFilter === cat.id
+                          ? "bg-primary text-white border-primary shadow-lg shadow-primary/20 scale-105"
+                          : "bg-white/5 border-white/5 text-muted-foreground hover:border-white/20 hover:text-white"
+                      )}
+                    >
+                      <cat.icon className={cn("w-4 h-4", categoryFilter === cat.id ? "text-white" : "text-primary")} />
+                      <span className="text-xs font-bold">{cat.label}</span>
+                    </button>
+                  ))}
                 </div>
-              </div>
-
-              {/* Status Filter */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground/80">{t("common.status")}</label>
-                <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger className="h-10 bg-background/50 border-input/50">
-                    <SelectValue placeholder={t("common.status")} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">
-                      {t("common.all")} {t("common.status")}
-                    </SelectItem>
-                    <SelectItem value="ongoing">
-                      {t("common.status_ongoing", { defaultValue: "Ongoing" })}
-                    </SelectItem>
-                    <SelectItem value="upcoming">
-                      {t("common.status_upcoming", { defaultValue: "Upcoming" })}
-                    </SelectItem>
-                    <SelectItem value="expired">
-                      {t("common.status_expired", { defaultValue: "Expired" })}
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Category Filter */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground/80">{t("common.category")}</label>
-                <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                  <SelectTrigger className="h-10 bg-background/50 border-input/50">
-                    <SelectValue placeholder={t("common.category")} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">
-                      {t("common.all")} {t("common.category")}
-                    </SelectItem>
-                    <SelectItem value="Agriculture">Agriculture</SelectItem>
-                    <SelectItem value="Fish Farming">Fish Farming</SelectItem>
-                    <SelectItem value="Real Estate">Real Estate</SelectItem>
-                  </SelectContent>
-                </Select>
               </div>
 
               {/* Reset Button */}
               {(searchTerm || statusFilter !== "all" || categoryFilter !== "all") && (
                 <Button
-                  variant="outline"
-                  size="sm"
+                  variant="ghost"
                   onClick={handleReset}
-                  className="w-full text-muted-foreground hover:text-foreground mt-2 border-dashed"
+                  className="h-12 px-6 rounded-xl md:rounded-full text-muted-foreground hover:text-red-500 hover:bg-red-500/10 transition-all font-black uppercase text-[10px] tracking-widest shrink-0"
                 >
                   <X className="mr-2 h-4 w-4" />
-                  {t("common.resetFilters")}
+                  {t("common.clearAll")}
                 </Button>
               )}
             </div>
           </div>
         </div>
+      </section>
 
-        {/* RIGHT COMPONENT: RESULTS & PAGINATION */}
-        <div className="lg:col-span-9 space-y-8">
-          {isLoading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[...Array(6)].map((_, i) => (
-                <div
-                  key={i}
-                  className="h-[400px] w-full bg-slate-100/50 dark:bg-slate-800/50 animate-pulse rounded-2xl"
-                />
-              ))}
+      {/* 3. RESULTS GRID */}
+      <section className="container mx-auto px-6 pt-12 pb-24">
+        <div className="space-y-12">
+          <div className="flex items-center justify-between">
+            <div className="space-y-1">
+                <h2 className="text-2xl font-black uppercase tracking-tighter">
+                  {statusFilter === "all" ? t("common.all") : t("projects.statusLabels." + statusFilter)} <span className="text-primary">{t("common.projects")}</span>
+                </h2>
+                <p className="text-xs text-muted-foreground font-medium">
+                  {t("projects.showingResults", { count: data?.data?.length || 0 })}
+                </p>
             </div>
-          ) : (
-            <>
-              {data?.data?.length > 0 ? (
-                <>
-                  <div
-                    className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 transition-opacity ${isFetching ? "opacity-50" : "opacity-100"}`}
-                  >
-                    {data.data.map((project: any) => (
-                      <ProjectCard key={project._id} project={project} />
-                    ))}
-                  </div>
+            <div className="flex gap-2">
+              {/* Add sort or view toggle here if needed */}
+            </div>
+          </div>
+            {isLoading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+                {[...Array(6)].map((_, i) => (
+                  <div key={i} className="h-[400px] w-full bg-white/5 animate-pulse rounded-[2rem]" />
+                ))}
+              </div>
+            ) : (
+              <>
+                {data?.data?.length > 0 ? (
+                  <>
+                    <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6 transition-opacity duration-500 ${isFetching ? "opacity-50" : "opacity-100"}`}>
+                      {data.data.map((project: any) => (
+                        <ProjectCard key={project._id} project={project} />
+                      ))}
+                    </div>
 
-                  <div className="flex justify-center pt-8 border-t border-border/50">
-                    <AFPagination
-                      currentPage={page}
-                      totalPages={data.meta?.totalPages || data.totalPages || 1}
-                      onPageChange={(p) => {
-                        setPage(p);
-                        window.scrollTo({ top: 0, behavior: "smooth" });
-                      }}
-                    />
+                    <div className="flex justify-center pt-10">
+                      <AFPagination
+                        currentPage={page}
+                        totalPages={data.meta?.totalPages || data.totalPages || 1}
+                        onPageChange={(p) => {
+                          setPage(p);
+                          window.scrollTo({ top: 300, behavior: "smooth" });
+                        }}
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <div className="py-32 flex flex-col items-center justify-center text-center glass border-dashed border-white/10 rounded-[3rem]">
+                    <h3 className="text-2xl font-black mb-4 uppercase tracking-tighter">{t("common.noProjects")}</h3>
+                    <Button onClick={handleReset} size="lg" className="rounded-full px-10 shadow-glow">{t("common.resetFilters")}</Button>
                   </div>
-                </>
-              ) : (
-                <div className="h-[60vh] flex flex-col items-center justify-center text-center p-8 bg-card/30 backdrop-blur-sm rounded-3xl border border-dashed border-border/50">
-                  <div className="h-20 w-20 bg-muted/50 rounded-full flex items-center justify-center mb-4">
-                    <Search className="h-8 w-8 text-muted-foreground" />
-                  </div>
-                  <h3 className="text-xl font-bold mb-2">{t("common.noProjectsFound", { defaultValue: "No projects found" })}</h3>
-                  <p className="text-muted-foreground max-w-md mx-auto mb-6">
-                    {t("common.noProjectsDesc", { defaultValue: "Try adjusting your filters or search terms to find what you're looking for." })}
-                  </p>
-                  <Button
-                    onClick={handleReset}
-                    variant="default"
-                    className="bg-primary text-primary-foreground shadow-lg shadow-primary/20"
-                  >
-                    {t("common.clearAll")}
-                  </Button>
-                </div>
-              )}
-            </>
-          )}
-        </div>
-      </div>
+                )}
+              </>
+            )}
+          </div>
+      </section>
     </div>
   );
 }

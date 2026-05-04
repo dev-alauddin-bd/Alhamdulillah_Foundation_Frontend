@@ -127,7 +127,8 @@ const baseApi = createApi({
     "Vote",
     "Fund",
     "Management",
-    "Notice"
+    "Notice",
+    "Sessions"
   ],
   endpoints: () => ({}),
 });

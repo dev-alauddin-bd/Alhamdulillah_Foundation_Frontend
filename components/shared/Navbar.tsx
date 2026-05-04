@@ -8,6 +8,7 @@ import { Sun, Moon, Menu, LayoutDashboard, LogOut } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
+import { cn } from "@/lib/utils";
 
 import { Button } from "@/components/ui/button";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
@@ -36,7 +37,7 @@ export default function Navbar() {
 
   useEffect(() => {
     setMounted(true);
-    const onScroll = () => setScrolled(window.scrollY > 10);
+    const onScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
@@ -51,160 +52,159 @@ export default function Navbar() {
   ];
 
   return (
-    <nav
-      className={`
-        fixed top-0 left-1/2 transform -translate-x-1/2
-        z-50 w-full container mx-auto md:mt-4 lg:mt-8
-        transition-all duration-300
-        ${scrolled
-          ? "h-12 bg-background/90 backdrop-blur-xl shadow-md"
-          : "h-14 bg-background/70 backdrop-blur-lg"}
-        md:rounded-2xl
-      `}
-    >
-      <div className="max-w-7xl mx-auto h-full px-4 md:px-6 flex items-center justify-between">
-        {/* Logo */}
-        <Link href="/" className="flex items-center">
-          <div className="relative h-10 w-10 md:h-14 md:w-14">
-            <Image src="/logo.png" alt="Logo" fill className="object-contain" />
-          </div>
-        </Link>
+    <header className="fixed top-0 left-0 w-full z-50 py-4">
+      <div className="container mx-auto px-4 md:px-8">
+        <nav className="flex items-center justify-between px-6 md:px-10 py-3 rounded-full transition-all duration-500 border border-white/5 glass shadow-2xl shadow-primary/10">
+          {/* Logo & Brand */}
+          <Link href="/" className="flex items-center gap-3 group relative">
+            <div className="relative h-10 w-10 md:h-12 md:w-12 transition-all duration-500 group-hover:rotate-[360deg] group-hover:scale-110">
+              <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+              <Image src="/logo.png" alt="Logo" fill className="object-contain relative z-10" />
+            </div>
+            <div className="flex flex-col space-y-1">
+              <span className="font-black text-sm md:text-lg tracking-tighter uppercase leading-none text-white">
+                ALHAMDULILLAH
+              </span>
+              <span className="font-bold text-[8px] md:text-[10px] tracking-[0.4em] uppercase text-primary/80 leading-none">
+                FOUNDATION
+              </span>
+            </div>
+          </Link>
 
-        {/* Desktop Nav */}
-        <div className="hidden md:flex items-center gap-2">
-          {navItems.map((item) => {
-            const active = pathname === item.href;
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`
-                  px-4 py-2 rounded-full
-                  text-sm md:text-base font-medium
-                  transition
-                  ${active
-                    ? "bg-primary text-primary-foreground"
-                    : "text-muted-foreground hover:bg-primary/10"}
-                `}
-              >
-                {item.label}
-              </Link>
-            );
-          })}
-        </div>
-
-        {/* Right actions */}
-        <div className="flex items-center gap-2">
-          {/* Desktop Auth */}
+          {/* Desktop Nav - Centered */}
           <div className="hidden md:flex items-center gap-2">
-            {user ? (
-              <>
-                <Link href="/dashboard">
-                  <Button variant="ghost" size="sm" className="rounded-full px-4">
-                    <LayoutDashboard size={16} className="mr-1" />
-                    {t("common.dashboard")}
+            {navItems.map((item) => {
+              const active = pathname === item.href;
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={cn(
+                    "px-5 py-2.5 rounded-full text-[11px] font-black uppercase tracking-widest transition-all relative group overflow-hidden",
+                    active 
+                      ? "text-primary bg-primary/10" 
+                      : "text-white/60 hover:text-white"
+                  )}
+                >
+                  <span className="relative z-10">{item.label}</span>
+                  {active && (
+                    <span className="absolute inset-0 bg-primary/5 animate-pulse" />
+                  )}
+                </Link>
+              );
+            })}
+          </div>
+
+          {/* Right actions */}
+          <div className="flex items-center gap-3 md:gap-5">
+            {/* Language Switcher - Premium Style */}
+            <button
+              onClick={() => i18n.changeLanguage(lang === "en" ? "bn" : "en")}
+              className="hidden sm:flex h-9 w-9 items-center justify-center rounded-full border border-white/10 hover:border-primary/50 transition-all text-[10px] font-black text-white/80 hover:text-primary uppercase bg-white/5"
+            >
+              {lang}
+            </button>
+
+            {/* Theme Toggle */}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              className="h-9 w-9 rounded-full border border-white/10 hover:border-primary/50 bg-white/5 text-white/80 hover:text-primary transition-all"
+            >
+              {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
+            </Button>
+
+            {/* Auth/Dashboard Action */}
+            <div className="hidden md:block">
+              {user ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button 
+                      variant="ghost" 
+                      className="rounded-full px-6 py-5 bg-primary/10 hover:bg-primary/20 border border-primary/20 gap-3 group"
+                    >
+                      <LayoutDashboard size={16} className="text-primary group-hover:rotate-12 transition-transform" />
+                      <span className="text-[11px] font-black uppercase tracking-widest text-primary">
+                        {user.name?.split(" ")[0] || t("common.dashboard")}
+                      </span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56 rounded-[1.5rem] p-3 glass border-white/10 mt-4 animate-in fade-in slide-in-from-top-4">
+                    <DropdownMenuItem asChild className="rounded-xl py-3 cursor-pointer">
+                      <Link href="/dashboard" className="flex items-center gap-3">
+                        <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+                          <LayoutDashboard size={16} />
+                        </div>
+                        <span className="font-bold text-sm">{t("common.dashboard")}</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator className="bg-white/5 my-2" />
+                    <DropdownMenuItem
+                      onClick={logoutHandler}
+                      className="rounded-xl py-3 cursor-pointer text-red-400 focus:text-red-400 focus:bg-red-400/10"
+                    >
+                      <div className="h-8 w-8 rounded-lg bg-red-400/10 flex items-center justify-center">
+                        <LogOut size={16} />
+                      </div>
+                      <span className="font-bold text-sm">{t("common.logout")}</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <Link href="/login">
+                  <Button className="rounded-full px-8 py-5 bg-primary hover:scale-105 active:scale-95 transition-all shadow-xl shadow-primary/30 font-black uppercase text-[11px] tracking-widest">
+                    {t("common.login")}
                   </Button>
                 </Link>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={logoutHandler}
-                  className="rounded-full px-4 text-red-600 hover:text-red-600"
-                >
-                  <LogOut size={16} className="mr-1" />
-                  {t("common.logout")}
-                </Button>
-              </>
-            ) : (
-              <Link href="/login">
-                <Button size="sm" className="rounded-full px-5">
-                  {t("common.login")}
-                </Button>
-              </Link>
-            )}
-          </div>
+              )}
+            </div>
 
-          {/* Mobile Menu */}
-          <div className="md:hidden">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button size="icon" variant="ghost" className="h-8 w-8 rounded-full">
-                  <Menu size={18} />
-                </Button>
-              </DropdownMenuTrigger>
-
-              <DropdownMenuContent
-                align="end"
-                sideOffset={8}
-                className="w-56 rounded-xl p-1 shadow-xl"
-              >
-                {navItems.map((item) => {
-                  const active = pathname === item.href;
-                  return (
-                    <DropdownMenuItem
-                      key={item.href}
-                      asChild
-                      className={`rounded-lg ${active && "bg-primary/10 text-primary"}`}
-                    >
-                      <Link href={item.href}>{item.label}</Link>
+            {/* Mobile Menu Toggle */}
+            <div className="md:hidden">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button size="icon" variant="ghost" className="h-10 w-10 rounded-full bg-white/5 border border-white/10">
+                    <Menu size={20} className="text-white" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-[calc(100vw-2rem)] mx-4 rounded-[2rem] p-4 glass border-white/10 mt-4 animate-in zoom-in-95">
+                  <div className="grid grid-cols-2 gap-2 mb-4">
+                    {navItems.map((item) => (
+                      <DropdownMenuItem key={item.href} asChild className="rounded-2xl p-4 bg-white/5 hover:bg-primary/10 border border-white/5 transition-all flex flex-col items-start gap-2">
+                        <Link href={item.href} className="w-full">
+                          <span className="text-[10px] font-black uppercase tracking-widest opacity-60">Navigate</span>
+                          <span className="font-bold text-sm text-white">{item.label}</span>
+                        </Link>
+                      </DropdownMenuItem>
+                    ))}
+                  </div>
+                  
+                  <DropdownMenuSeparator className="bg-white/5 my-4" />
+                  
+                  <div className="space-y-2">
+                    <DropdownMenuItem asChild className="rounded-2xl py-4 bg-primary text-white flex justify-center cursor-pointer">
+                      <Link href={user ? "/dashboard" : "/login"} className="gap-3 font-black uppercase tracking-widest text-[11px]">
+                        <LayoutDashboard size={18} />
+                        {user ? t("common.dashboard") : t("common.login")}
+                      </Link>
                     </DropdownMenuItem>
-                  );
-                })}
-
-                <DropdownMenuSeparator />
-
-                <DropdownMenuItem asChild className="gap-2">
-                  <Link href={user ? "/dashboard" : "/login"}>
-                    <LayoutDashboard size={16} />
-                    {user ? t("common.dashboard") : t("common.login")}
-                  </Link>
-                </DropdownMenuItem>
-
-                {user && (
-                  <DropdownMenuItem
-                    onClick={logoutHandler}
-                    className="gap-2 text-red-600 focus:text-red-600"
-                  >
-                    <LogOut size={16} />
-                    {t("common.logout")}
-                  </DropdownMenuItem>
-                )}
-              </DropdownMenuContent>
-            </DropdownMenu>
+                    {user && (
+                      <DropdownMenuItem
+                        onClick={logoutHandler}
+                        className="rounded-2xl py-4 bg-red-400/10 text-red-400 flex justify-center cursor-pointer border border-red-400/20"
+                      >
+                        <LogOut size={18} />
+                        <span className="font-black uppercase tracking-widest text-[11px] ml-3">{t("common.logout")}</span>
+                      </DropdownMenuItem>
+                    )}
+                  </div>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           </div>
-
-          {/* Theme */}
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            className="h-8 w-8 md:h-9 md:w-9 rounded-full"
-          >
-            {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
-          </Button>
-
-          {/* Language */}
-          <ToggleGroup
-            type="single"
-            value={lang}
-            onValueChange={(v) => v && i18n.changeLanguage(v)}
-            className="flex items-center h-6 sm:h-7 md:h-8 border border-muted/50 rounded-md"
-          >
-            <ToggleGroupItem
-              value="en"
-              className="text-[9px] sm:text-[11px] md:text-sm px-1.5 sm:px-2 md:px-3 h-5 sm:h-6 md:h-7"
-            >
-              EN
-            </ToggleGroupItem>
-            <ToggleGroupItem
-              value="bn"
-              className="text-[9px] sm:text-[11px] md:text-sm px-1.5 sm:px-2 md:px-3 h-5 sm:h-6 md:h-7"
-            >
-              BN
-            </ToggleGroupItem>
-          </ToggleGroup>
-        </div>
+        </nav>
       </div>
-    </nav>
+    </header>
   );
 }

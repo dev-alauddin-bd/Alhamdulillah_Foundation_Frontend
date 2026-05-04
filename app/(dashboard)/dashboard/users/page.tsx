@@ -149,6 +149,14 @@ export default function UsersPage() {
       ),
     },
     {
+      header: t("management.position") || "Designation",
+      cell: (user: any) => (
+        <span className="text-xs font-bold text-muted-foreground bg-muted/20 px-2 py-1 rounded-lg">
+          {user.designation || "N/A"}
+        </span>
+      ),
+    },
+    {
       header: t("users.role"),
       cell: (user: any) => (
         isAdmin ? (
@@ -334,14 +342,29 @@ export default function UsersPage() {
 
            <div className="grid grid-cols-1 gap-4">
               <div className="p-5 rounded-[1.5rem] bg-muted/20 border border-muted/10">
-                 <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-3">{t("users.assets")}</p>
-                 <div className="flex justify-between items-center bg-background/50 p-4 rounded-xl mb-2">
-                    <span className="text-xs font-bold text-muted-foreground">{t("users.shareNo")}</span>
-                    <span className="text-sm font-black text-primary">{viewingUser?.shareNo || "N/A"}</span>
-                 </div>
-                 <div className="flex justify-between items-center bg-background/50 p-4 rounded-xl">
-                    <span className="text-xs font-bold text-muted-foreground">{t("users.shareCount")}</span>
-                    <span className="text-sm font-black text-emerald-600">{viewingUser?.shareCount || 0}</span>
+                 <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-3">ব্যবহারকারীর তথ্য</p>
+                 
+                 <div className="space-y-2">
+                    <div className="flex justify-between items-center bg-background/50 p-4 rounded-xl">
+                       <span className="text-xs font-bold text-muted-foreground">র‍্যাঙ্ক / পদবী</span>
+                       <span className="text-sm font-black text-blue-600">{viewingUser?.designation || "সদস্য"}</span>
+                    </div>
+                    <div className="flex justify-between items-center bg-background/50 p-4 rounded-xl">
+                       <span className="text-xs font-bold text-muted-foreground">ফোন নম্বর</span>
+                       <span className="text-sm font-black text-foreground">{viewingUser?.phone || "N/A"}</span>
+                    </div>
+                    <div className="flex justify-between items-center bg-background/50 p-4 rounded-xl">
+                       <span className="text-xs font-bold text-muted-foreground">শেয়ার নম্বর</span>
+                       <span className="text-sm font-black text-primary">{viewingUser?.shareNo || "N/A"}</span>
+                    </div>
+                    <div className="flex justify-between items-center bg-background/50 p-4 rounded-xl">
+                       <span className="text-xs font-bold text-muted-foreground">মোট শেয়ার</span>
+                       <span className="text-sm font-black text-emerald-600">{viewingUser?.shareCount || 0}</span>
+                    </div>
+                    <div className="p-4 bg-background/50 rounded-xl">
+                       <span className="text-xs font-bold text-muted-foreground block mb-1">ঠিকানা</span>
+                       <span className="text-xs font-medium text-foreground">{viewingUser?.address || "তথ্য নেই"}, {viewingUser?.cityState || ""}</span>
+                    </div>
                  </div>
               </div>
            </div>
@@ -388,6 +411,14 @@ export default function UsersPage() {
                 className="rounded-2xl h-11"
               />
             </div>
+            <div className="space-y-2">
+              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{t("management.position") || "Designation"}</label>
+              <Input 
+                value={editingUser?.designation || ""} 
+                onChange={(e) => setEditingUser({...editingUser, designation: e.target.value})}
+                className="rounded-2xl h-11"
+              />
+            </div>
           </div>
 
           <div className="space-y-3">
@@ -423,7 +454,8 @@ export default function UsersPage() {
                     data: { 
                       permissions: selectedPermissions,
                       shareNo: editingUser.shareNo,
-                      shareCount: editingUser.shareCount
+                      shareCount: editingUser.shareCount,
+                      designation: editingUser.designation
                     },
                   }).unwrap();
                   toast.success(t("common.success"), { id: toastId });

@@ -243,9 +243,19 @@ export default function ProjectForm({
             <Input
               type="date"
               value={formData.startDate}
-              onChange={(e) =>
-                setFormData({ ...formData, startDate: e.target.value })
-              }
+              onChange={(e) => {
+                const start = e.target.value;
+                let end = formData.endDate;
+                
+                if (start) {
+                  // 🔒 Requirement 13: Default duration 36 months
+                  const date = new Date(start);
+                  date.setMonth(date.getMonth() + 36);
+                  end = date.toISOString().split("T")[0];
+                }
+                
+                setFormData({ ...formData, startDate: start, endDate: end });
+              }}
               required
             />
           </div>
