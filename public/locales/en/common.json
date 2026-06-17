@@ -67,7 +67,67 @@
     "projectsDesc": "Active ventures managed",
     "visionLink": "Learn more about our vision",
     "transparency": "100%",
-    "transparencyDesc": "Transparency & Ethical Management"
+    "transparencyDesc": "Transparency & Ethical Management",
+    "heroTitle": "Empowering Communities, Transforming Lives.",
+    "heroDesc": "Alhamdulillah Foundation is dedicated to creating sustainable investments and charitable initiatives that uplift society.",
+    "missionTitle": "Our Mission & Vision",
+    "missionSubtitle": "What Drives Us",
+    "missionDesc1": "Our mission is to bridge the gap between resources and needs through transparent, ethical, and impactful investments. We envision a world where every individual has the opportunity to thrive.",
+    "missionDesc2": "We started with a simple idea: that collective small contributions can lead to massive change. Today, we are proud to support hundreds of families through our agricultural and development projects.",
+    "valuesTitle": "Our Core Values",
+    "valuesSubtitle": "The Principles That Guide Us",
+    "values": {
+      "compassion": {
+        "title": "Compassion",
+        "desc": "We believe in helping those in need with kindness and empathy."
+      },
+      "transparency": {
+        "title": "Transparency",
+        "desc": "Every donation is tracked and accounted for, ensuring trust."
+      },
+      "innovation": {
+        "title": "Innovation",
+        "desc": "Using technology to solve age-old problems in our community."
+      },
+      "community": {
+        "title": "Community",
+        "desc": "Building a strong network of supporters and beneficiaries."
+      }
+    },
+    "committees": {
+      "title": "Our Committees",
+      "subtitle": "Engaged in Foundation Management",
+      "investigationTitle": "Investigation Committee",
+      "investigationTenure": "Tenure: 12 Months",
+      "investigationNote": "This committee is formed for 12 months. No project will be launched without signatures from at least 5 members in the investigation report.",
+      "advisoryTitle": "Advisory Committee",
+      "advisoryTenure": "Tenure: 36 Months",
+      "advisoryNote": "This committee is formed for 36 months. Providing new investment ideas and dynamics to ongoing projects is their main objective."
+    },
+    "rules": {
+      "title": "Foundation Operations & Regulations",
+      "subtitle": "Our Target & Objective",
+      "operationsHeading": "Operational Rules",
+      "operationsList": [
+        "This is a leadership financial institution whose main work is to manage financial investments by dividing into small groups.",
+        "Our goal is to achieve social development by combining manpower and financial strength.",
+        "The final investment of each of our investment projects is 30,000/- to 150,000/- BDT.",
+        "A committee of 4-8 people will be formed for each project, whose job will be to play an active role from purchasing products to selling them.",
+        "Each shareholder has to deposit one thousand BDT every month for up to 12 months.",
+        "40% of the project's profit will go to the active committee, 10% to the welfare fund, and 50% will be deposited in all shareholders' accounts.",
+        "This institution will be run in compliance with Islamic rules. We will work to build a interest-free society."
+      ],
+      "cancelHeading": "Regarding Share Cancellation",
+      "cancelList": [
+        "In case of failure to comply with the rules, membership will be cancelled first by notice and subsequently based on 51% opinion.",
+        "Depositing savings every month is mandatory. Failure for 3 consecutive months will result in cancellation of ownership.",
+        "Membership will be cancelled if involved in anti-social activities.",
+        "No shareholder can close their account before completing 6 months.",
+        "If irregularities are found in project work, the authority can impose financial fines or cancel shares."
+      ],
+      "quoteText": "\"We will always be social and build ourselves as dedicated souls to solve all kinds of problems in society.\"",
+      "inshallah": "InshaAllah"
+    }
   },
 
   "footer": {
@@ -569,7 +629,10 @@
       "secured": "Secured login · SSL protected",
       "invalid": "Invalid email or password",
       "LoginAccount": "Login Account",
-      "joinFoundation": "Join Foundation"
+      "joinFoundation": "Join Foundation",
+      "emailPlaceholder": "Type your email",
+      "passwordPlaceholder": "Type your password",
+      "successMessage": "Login successful"
     },
     "register": {
       "registerTitle": "Create Account",
@@ -584,7 +647,55 @@
       "signIn": "Sign In",
       "invalid": "Invalid email or password",
       "creatingAccount": "Creating Account...",
-      "joinFoundation": "Join Foundation"
+      "joinFoundation": "Join Foundation",
+      "becomeMember": "Become a part of our foundation today",
+      "firstNamePlaceholder": "First Name",
+      "lastNamePlaceholder": "Last Name",
+      "emailPlaceholder": "Type your email",
+      "passwordPlaceholder": "Min 6 characters",
+      "confirmPasswordPlaceholder": "Repeat password",
+      "otpVerification": "Email Verification",
+      "otpSentMessage": "An OTP code has been sent to your email {{email}}",
+      "enterOtp": "Enter OTP Code",
+      "otpPlaceholder": "6 Digit Code",
+      "changeInfo": "Change Information",
+      "pleaseWait": "Please wait...",
+      "verifyAndSignUp": "Verify and Sign Up",
+      "otpSentToast": "An OTP has been sent to your email.",
+      "otpSendFailedToast": "Failed to send OTP.",
+      "enterValidOtpToast": "Please enter a valid 6-digit OTP",
+      "otpVerificationFailedToast": "Invalid or expired OTP"
     }
+  },
+  "noticesPage": {
+    "officialNotices": "Official Notices",
+    "subtitle": "Important Announcements & Updates",
+    "description": "Stay informed about the latest activities, decisions, and reports from the Alhamdulillah Foundation board.",
+    "officialDocument": "Official Document",
+    "postedBy": "Posted by {{name}}",
+    "download": "Download",
+    "noAttachment": "No Attachment",
+    "noNoticesFound": "No Notices Found",
+    "noNoticesDesc": "There are no notices to display at this time."
+  },
+  "unauthorized": {
+    "title": "Access Restricted",
+    "subtitle": "Security Protocol: Your current account level does not have clearance for this sector.",
+    "securityNote": "Security Note",
+    "securityDesc": "If you believe this is a mistake, contact the System Administrator to request elevated privileges (SUPER_ADMIN status).",
+    "returnBtn": "Return to Dashboard",
+    "backHome": "Back Home",
+    "encryptionId": "Encryption ID: AF-RESTRICTED-403-PRTCL"
+  },
+  "privacyPage": {
+    "p1": "We only ask for personal information when we truly need it to provide a service to you. We collect it by fair and lawful means, with your knowledge and consent. We also let you know why we’re collecting it and how it will be used.",
+    "retentionTitle": "Data Retention",
+    "retentionDesc": "We only retain collected information for as long as necessary to provide you with your requested service. What data we store, we’ll protect within commercially acceptable means to prevent loss and theft, as well as unauthorized access, disclosure, copying, use or modification."
+  },
+  "termsPage": {
+    "licenseTitle": "1. Use License",
+    "licenseDesc": "Permission is granted to temporarily download one copy of the materials (information or software) on Alhamdulillah Foundation's website for personal, non-commercial transitory viewing only.",
+    "disclaimerTitle": "2. Disclaimer",
+    "disclaimerDesc": "The materials on Alhamdulillah Foundation's website are provided on an 'as is' basis. Alhamdulillah Foundation makes no warranties, expressed or implied, and hereby disclaims and negates all other warranties including, without limitation, implied warranties or conditions of merchantability, fitness for a particular purpose, or non-infringement of intellectual property or other violation of rights."
   }
 }
