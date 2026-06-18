@@ -90,20 +90,12 @@ const authApi = baseApi.injectEndpoints({
       },
     }),
     
-    // ===== ✅ Change Password with OTP =====
+    // ===== ✅ Change Password =====
     changePassword: build.mutation({
       query: (body) => ({
         url: "/auth/change-password",
         method: "POST",
         body,
-      }),
-    }),
-
-    // ===== ✅ Send OTP =====
-    sendOtp: build.mutation({
-      query: () => ({
-        url: "/auth/send-otp",
-        method: "POST",
       }),
     }),
     // ===== ✅ Sessions =====
@@ -124,20 +116,7 @@ const authApi = baseApi.injectEndpoints({
       invalidatesTags: ["Sessions"],
     }),
 
-    sendRegistrationOtp: build.mutation({
-        query: (email) => ({
-            url: "/auth/send-registration-otp",
-            method: "POST",
-            body: { email },
-        }),
-    }),
 
-    sendPasswordOtp: build.mutation({
-        query: () => ({
-            url: "/auth/send-password-otp",
-            method: "POST",
-        }),
-    }),
   }),
 });
 
@@ -150,11 +129,8 @@ export const {
   useLogoutUserMutation,
   useSyncSessionMutation,
   useChangePasswordMutation,
-  useSendOtpMutation,
   useGetSessionsQuery,
   useRevokeSessionMutation,
-  useSendRegistrationOtpMutation,
-  useSendPasswordOtpMutation,
 } = authApi;
 
 export default authApi;

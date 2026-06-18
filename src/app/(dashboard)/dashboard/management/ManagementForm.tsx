@@ -28,6 +28,7 @@ import {
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useTranslation } from "react-i18next";
 
 const formSchema = z.object({
   userId: z.string().optional(),
@@ -48,6 +49,7 @@ export function ManagementForm({
   initialData,
   onSuccess,
 }: ManagementFormProps) {
+  const { t } = useTranslation();
   const { data: usersResponse } = useGetUsersQuery({});
   const users = usersResponse?.data || [];
   const [createManagement, { isLoading: isCreating }] =
@@ -80,14 +82,14 @@ export function ManagementForm({
     try {
       if (initialData) {
         await updateManagement({ id: initialData._id, ...payload }).unwrap();
-        toast.success("রেকর্ড আপডেট করা হয়েছে");
+        toast.success(t("management.toastUpdateSuccess"));
       } else {
         await createManagement(payload).unwrap();
-        toast.success("নতুন সদস্য নিয়োগ সফল হয়েছে");
+        toast.success(t("management.toastCreateSuccess"));
       }
       onSuccess();
     } catch (error) {
-      toast.error("একটি ত্রুটি ঘটেছে");
+      toast.error(t("management.toastGeneralError"));
     }
   }
 
@@ -99,18 +101,18 @@ export function ManagementForm({
           name="userId"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>সংশ্লিষ্ট ইউজার (যদি থাকে)</FormLabel>
+              <FormLabel>{t("management.userLabel")}</FormLabel>
               <Select
                 onValueChange={field.onChange}
                 defaultValue={field.value}
               >
                 <FormControl>
                   <SelectTrigger className="rounded-xl h-11">
-                    <SelectValue placeholder="ইউজার সিলেক্ট করুন" />
+                    <SelectValue placeholder={t("management.userPlaceholder")} />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent className="rounded-xl">
-                  <SelectItem value="unselected">ইউজার ছাড়া যুক্ত করুন</SelectItem>
+                  <SelectItem value="unselected">{t("management.userNoneOption")}</SelectItem>
                   {users?.map((user: any) => (
                     <SelectItem key={user._id} value={user._id}>
                       {user.name} ({user.email})
@@ -128,9 +130,9 @@ export function ManagementForm({
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>সদস্যের নাম</FormLabel>
+              <FormLabel>{t("management.nameLabel")}</FormLabel>
               <FormControl>
-                <Input placeholder="নাম লিখুন" {...field} className="rounded-xl h-11" />
+                <Input placeholder={t("management.namePlaceholder")} {...field} className="rounded-xl h-11" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -142,20 +144,20 @@ export function ManagementForm({
           name="committeeType"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>কমিটির ধরন</FormLabel>
+              <FormLabel>{t("management.committeeTypeLabel")}</FormLabel>
               <Select
                 onValueChange={field.onChange}
                 defaultValue={field.value}
               >
                 <FormControl>
                   <SelectTrigger className="rounded-xl h-11">
-                    <SelectValue placeholder="ধরন বেছে নিন" />
+                    <SelectValue placeholder={t("management.committeeTypePlaceholder")} />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent className="rounded-xl">
-                  <SelectItem value="GENERAL">বোর্ড অফ মেম্বার</SelectItem>
-                  <SelectItem value="ADVISORY">উপদেষ্টা পরিষদ</SelectItem>
-                  <SelectItem value="INVESTIGATION">তদন্ত কমিটি</SelectItem>
+                  <SelectItem value="GENERAL">{t("management.committeeGeneral")}</SelectItem>
+                  <SelectItem value="ADVISORY">{t("management.committeeAdvisory")}</SelectItem>
+                  <SelectItem value="INVESTIGATION">{t("management.committeeInvestigation")}</SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -168,9 +170,9 @@ export function ManagementForm({
           name="position"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>পদবী</FormLabel>
+              <FormLabel>{t("management.positionLabel")}</FormLabel>
               <FormControl>
-                <Input placeholder="যেমন: সভাপতি, কোষাধ্যক্ষ" {...field} className="rounded-xl h-11" />
+                <Input placeholder={t("management.positionPlaceholder")} {...field} className="rounded-xl h-11" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -183,7 +185,7 @@ export function ManagementForm({
             name="startAt"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>নিয়োগের তারিখ</FormLabel>
+                <FormLabel>{t("management.startDateLabel")}</FormLabel>
                 <FormControl>
                   <Input type="date" {...field} className="rounded-xl h-11" />
                 </FormControl>
@@ -197,7 +199,7 @@ export function ManagementForm({
             name="endAt"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>শেষের তারিখ</FormLabel>
+                <FormLabel>{t("management.endDateLabel")}</FormLabel>
                 <FormControl>
                   <Input 
                     type="date" 
@@ -224,7 +226,7 @@ export function ManagementForm({
                 />
               </FormControl>
               <div className="space-y-1 leading-none">
-                <FormLabel className="text-xs font-bold">বর্তমান সক্রিয় সদস্য</FormLabel>
+                <FormLabel className="text-xs font-bold">{t("management.activeCheckboxLabel")}</FormLabel>
               </div>
             </FormItem>
           )}
@@ -238,7 +240,7 @@ export function ManagementForm({
           {(isCreating || isUpdating) && (
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
           )}
-          {initialData ? "পরিবর্তন এপ্লাই করুন" : "নিয়োগ সম্পন্ন করুন"}
+          {initialData ? t("management.submitBtnUpdate") : t("management.submitBtnCreate")}
         </Button>
       </form>
     </Form>

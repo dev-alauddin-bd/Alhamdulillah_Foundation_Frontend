@@ -168,12 +168,12 @@ interface AppSidebarProps {
 
 //======================   COMPONENT LOGIC   ===============================
 export function AppSidebar({ user }: AppSidebarProps) {
-    const logoutHandler = useAppLogout();
-  
+  const logoutHandler = useAppLogout();
+
   const { t } = useTranslation();
   const router = useRouter();
   const pathname = usePathname();
- 
+
   const currentAvatar = user?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || "U")}&background=0D9488&color=fff&bold=true`;
 
   return (
@@ -244,11 +244,10 @@ export function AppSidebar({ user }: AppSidebarProps) {
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton
                         asChild
-                        className={`h-11 px-4 rounded-xl transition-all duration-300 relative group/menu ${
-                          isActive
-                            ? "bg-primary text-primary-foreground shadow-xl shadow-primary/20 scale-[1.02] border border-primary/20 ring-1 ring-white/10"
-                            : "text-sidebar-foreground/70 hover:bg-primary/5 hover:text-primary active:scale-[0.98] hover:pl-5"
-                        }`}
+                        className={`h-11 px-4 rounded-xl transition-all duration-300 relative group/menu ${isActive
+                          ? "bg-primary text-primary-foreground shadow-xl shadow-primary/20 scale-[1.02] border border-primary/20 ring-1 ring-white/10"
+                          : "text-sidebar-foreground/70 hover:bg-primary/5 hover:text-primary active:scale-[0.98] hover:pl-5"
+                          }`}
                       >
                         <Link
                           href={item.url}

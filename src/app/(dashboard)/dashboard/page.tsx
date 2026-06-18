@@ -106,15 +106,7 @@ export default function DashboardPage() {
               </p>
             </div>
 
-            <Link href="/dashboard/membership" className="w-full sm:w-auto">
-              <Button
-                variant="default"
-                size="lg"
-                className="w-full sm:px-12 rounded-2xl font-black bg-primary hover:bg-primary/90 shadow-xl shadow-primary/20 hover:scale-[1.02] transition-all h-14"
-              >
-                {t("dashboard.membershipBtn") || "Activate Account Now"}
-              </Button>
-            </Link>
+
           </div>
         </Card>
       </div>

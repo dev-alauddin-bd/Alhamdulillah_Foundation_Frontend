@@ -8,7 +8,6 @@ import {
     useGetMeQuery, 
     useGetSessionsQuery, 
     useRevokeSessionMutation,
-    useSendPasswordOtpMutation,
     useChangePasswordMutation
 } from "@/redux/features/auth/authApi";
 import { useUpdateUserMeMutation } from "@/redux/features/user/userApi";
@@ -42,7 +41,6 @@ export default function SettingsPage() {
   const [updateUserMe, { isLoading: updating }] = useUpdateUserMeMutation();
   const { data: sessionsResponse, isLoading: loadingSessions } = useGetSessionsQuery(undefined);
   const [revokeSession] = useRevokeSessionMutation();
-  const [sendPasswordOtp, { isLoading: sendingOtp }] = useSendPasswordOtpMutation();
   const [changePassword, { isLoading: changingPassword }] = useChangePasswordMutation();
 
   const [, setActiveTab] = useState("profile");
@@ -51,8 +49,7 @@ export default function SettingsPage() {
   // Security State
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [otpSent, setOtpSent] = useState(false);
-  const [otpCode, setOtpCode] = useState("");
+
 
   const [formData, setFormData] = useState({
     name: "",
@@ -105,36 +102,20 @@ export default function SettingsPage() {
     }
   };
 
-  const handleSendOTP = async () => {
-    try {
-      await sendPasswordOtp(undefined).unwrap();
-      toast.success(t("settings.otpSentSuccess"));
-      setOtpSent(true);
-    } catch (err) {
-      toast.error(t("settings.otpSendError"));
-    }
-  };
-
   const handlePasswordChange = async () => {
     if (newPassword !== confirmPassword) {
         toast.error(t("settings.passwordsDoNotMatch"));
         return;
     }
-    if (!otpCode) {
-        toast.error(t("settings.provideOtp"));
-        return;
-    }
 
     const toastId = toast.loading(t("settings.changingPassword"));
     try {
-      await changePassword({ otpCode, newPassword }).unwrap();
+      await changePassword({ newPassword }).unwrap();
       toast.success(t("settings.passwordChangeSuccess"), { id: toastId });
       setNewPassword("");
       setConfirmPassword("");
-      setOtpSent(false);
-      setOtpCode("");
     } catch (err) {
-      toast.error(t("settings.otpError"), { id: toastId });
+      toast.error(t("settings.passwordChangeError", { defaultValue: "Failed to change password." }), { id: toastId });
     }
   };
 
@@ -354,73 +335,47 @@ export default function SettingsPage() {
                     </div>
 
                     <div className="p-10 space-y-8">
-                        {!otpSent ? (
-                            <div className="space-y-6 text-center">
-                                <div className="p-10 bg-primary/5 rounded-[2.5rem] border border-primary/10">
-                                    <Mail className="mx-auto text-primary mb-4" size={40} />
-                                    <h4 className="text-sm font-black uppercase tracking-widest text-primary mb-2">{t("settings.emailVerification")}</h4>
-                                    <p className="text-xs font-medium text-muted-foreground leading-relaxed">
-                                        {t("settings.emailVerificationDesc", { email: user?.email })}
-                                    </p>
-                                </div>
+                        <div className="space-y-6">
+                            <div className="space-y-3">
+                                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">{t("settings.newPasswordLabel")}</label>
+                                <Input 
+                                    type="password" 
+                                    value={newPassword}
+                                    onChange={(e) => setNewPassword(e.target.value)}
+                                    className="bg-muted/20 rounded-2xl h-16 px-6 text-sm font-black" 
+                                />
+                            </div>
+                            <div className="space-y-3">
+                                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">{t("settings.confirmPasswordLabel")}</label>
+                                <Input 
+                                    type="password" 
+                                    value={confirmPassword}
+                                    onChange={(e) => setConfirmPassword(e.target.value)}
+                                    className="bg-muted/20 rounded-2xl h-16 px-6 text-sm font-black" 
+                                />
+                            </div>
+                            
+                            <div className="pt-6 flex gap-4">
                                 <Button 
-                                    onClick={handleSendOTP}
-                                    disabled={sendingOtp}
-                                    className="w-full h-16 rounded-2xl bg-primary font-black uppercase text-xs tracking-widest"
+                                    variant="outline" 
+                                    onClick={() => {
+                                        setNewPassword("");
+                                        setConfirmPassword("");
+                                    }}
+                                    className="flex-1 h-16 rounded-2xl font-black uppercase text-[10px] tracking-widest"
                                 >
-                                    {sendingOtp ? <Loader2 className="mr-3 animate-spin" /> : <Mail className="mr-3" />} 
-                                    {t("settings.sendOtpBtn")}
+                                    {t("common.cancel")}
+                                </Button>
+                                <Button 
+                                    onClick={handlePasswordChange}
+                                    disabled={changingPassword}
+                                    className="flex-[2] h-16 rounded-2xl bg-emerald-600 font-black uppercase text-[10px] tracking-widest text-white"
+                                >
+                                    {changingPassword ? <Loader2 className="animate-spin mr-2" /> : <CheckCircle2 className="mr-2" />}
+                                    {t("settings.updateBtn")}
                                 </Button>
                             </div>
-                        ) : (
-                            <div className="space-y-6 animate-in slide-in-from-top-4 duration-500">
-                                <div className="space-y-3">
-                                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">{t("settings.enterOtpLabel")}</label>
-                                    <Input 
-                                        placeholder={t("settings.otpPlaceholder")} 
-                                        value={otpCode}
-                                        onChange={(e) => setOtpCode(e.target.value)}
-                                        className="bg-muted/20 rounded-2xl h-16 px-6 text-center text-2xl font-black tracking-[0.5em]" 
-                                    />
-                                </div>
-                                <div className="space-y-3">
-                                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">{t("settings.newPasswordLabel")}</label>
-                                    <Input 
-                                        type="password" 
-                                        value={newPassword}
-                                        onChange={(e) => setNewPassword(e.target.value)}
-                                        className="bg-muted/20 rounded-2xl h-16 px-6 text-sm font-black" 
-                                    />
-                                </div>
-                                <div className="space-y-3">
-                                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">{t("settings.confirmPasswordLabel")}</label>
-                                    <Input 
-                                        type="password" 
-                                        value={confirmPassword}
-                                        onChange={(e) => setConfirmPassword(e.target.value)}
-                                        className="bg-muted/20 rounded-2xl h-16 px-6 text-sm font-black" 
-                                    />
-                                </div>
-                                
-                                <div className="pt-6 flex gap-4">
-                                    <Button 
-                                        variant="outline" 
-                                        onClick={() => setOtpSent(false)}
-                                        className="flex-1 h-16 rounded-2xl font-black uppercase text-[10px] tracking-widest"
-                                    >
-                                        {t("common.cancel")}
-                                    </Button>
-                                    <Button 
-                                        onClick={handlePasswordChange}
-                                        disabled={changingPassword}
-                                        className="flex-[2] h-16 rounded-2xl bg-emerald-600 font-black uppercase text-[10px] tracking-widest text-white"
-                                    >
-                                        {changingPassword ? <Loader2 className="animate-spin mr-2" /> : <CheckCircle2 className="mr-2" />}
-                                        {t("settings.updateBtn")}
-                                    </Button>
-                                </div>
-                            </div>
-                        )}
+                        </div>
                     </div>
                 </Card>
             </div>

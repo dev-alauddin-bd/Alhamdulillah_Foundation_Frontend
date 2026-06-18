@@ -60,7 +60,7 @@ export default function MonthlyDonationPage() {
       }
 
       if (paymentMethod.includes("MANUAL")) {
-        toast.success("Payment record created. Please submit details.", { id: toastId });
+        toast.success(t("gateway.recordCreated"), { id: toastId });
         setManualSubmitted(true);
         (window as any).currentPaymentId = paymentId;
         return;
@@ -78,30 +78,30 @@ export default function MonthlyDonationPage() {
   const handleManualSubmit = async () => {
     const paymentId = (window as any).currentPaymentId;
     if (!paymentId || !trxId) {
-      toast.error("Transaction ID is required");
+      toast.error(t("gateway.trxIdRequired"));
       return;
     }
 
-    const toastId = toast.loading("Verifying transaction details...");
+    const toastId = toast.loading(t("gateway.verifyingTrx"));
     try {
       await submitManual({
         paymentId,
         transactionId: trxId,
         senderNumber,
       }).unwrap();
-      
-      toast.success("Submission successful! Waiting for approval.", { id: toastId });
+
+      toast.success(t("gateway.submitSuccess"), { id: toastId });
       router.push("/dashboard/my-payments");
     } catch (error: any) {
-      toast.error(error?.data?.message || "Submission failed", { id: toastId });
+      toast.error(error?.data?.message || t("gateway.submitFailed"), { id: toastId });
     }
   };
 
   const paymentOptions = [
-    { id: "BKASH_GATEWAY", name: "বিকাশ পেমেন্ট", color: "bg-[#E2136E]", desc: "সরাসরি পেমেন্ট" },
-    { id: "BKASH_MANUAL", name: "বিকাশ (ম্যানুয়াল)", color: "bg-[#E2136E]/80", desc: "নম্বর: 01700000000 (Send Money)" },
-    { id: "NAGAD_MANUAL", name: "নগদ (ম্যানুয়াল)", color: "bg-[#F04922]", desc: "নম্বর: 01800000000 (Send Money)" },
-    { id: "ROCKET_MANUAL", name: "রকেট (ম্যানুয়াল)", color: "bg-[#8C3494]", desc: "নম্বর: 01900000000 (Send Money)" },
+    { id: "SSL_GATEWAY", name: t("gateway.sslGateway"), color: "bg-[#0A2540]", desc: t("gateway.sslDesc") },
+    { id: "BKASH_MANUAL", name: t("gateway.bkashManual"), color: "bg-[#E2136E]/80", desc: t("gateway.bkashDesc") },
+    { id: "NAGAD_MANUAL", name: t("gateway.nagadManual"), color: "bg-[#F04922]", desc: t("gateway.nagadDesc") },
+    { id: "ROCKET_MANUAL", name: t("gateway.rocketManual"), color: "bg-[#8C3494]", desc: t("gateway.rocketDesc") },
   ];
 
   return (
@@ -229,38 +229,38 @@ export default function MonthlyDonationPage() {
             </div>
             <div className="p-4 sm:p-6 space-y-6">
               {manualSubmitted ? (
-                 <div className="space-y-6 animate-in fade-in duration-500">
-                    <div className="text-center space-y-2">
-                      <h4 className="text-sm font-black uppercase tracking-widest">Submit Details</h4>
+                <div className="space-y-6 animate-in fade-in duration-500">
+                  <div className="text-center space-y-2">
+                    <h4 className="text-sm font-black uppercase tracking-widest">{t("gateway.submitDetails")}</h4>
+                  </div>
+                  <div className="space-y-4">
+                    <div className="space-y-1">
+                      <Label className="text-[9px] font-black uppercase tracking-widest ml-1">{t("gateway.trxId")}</Label>
+                      <Input
+                        value={trxId}
+                        onChange={(e) => setTrxId(e.target.value)}
+                        placeholder="TRX ID"
+                        className="h-12 rounded-xl border-muted/20 bg-background/50"
+                      />
                     </div>
-                    <div className="space-y-4">
-                      <div className="space-y-1">
-                        <Label className="text-[9px] font-black uppercase tracking-widest ml-1">Transaction ID</Label>
-                        <Input 
-                          value={trxId} 
-                          onChange={(e) => setTrxId(e.target.value)} 
-                          placeholder="TRX ID" 
-                          className="h-12 rounded-xl border-muted/20 bg-background/50"
-                        />
-                      </div>
-                      <div className="space-y-1">
-                        <Label className="text-[9px] font-black uppercase tracking-widest ml-1">Sender Number</Label>
-                        <Input 
-                          value={senderNumber} 
-                          onChange={(e) => setSenderNumber(e.target.value)} 
-                          placeholder="01XXXXXXXXX" 
-                          className="h-12 rounded-xl border-muted/20 bg-background/50"
-                        />
-                      </div>
+                    <div className="space-y-1">
+                      <Label className="text-[9px] font-black uppercase tracking-widest ml-1">{t("gateway.senderNumber")}</Label>
+                      <Input
+                        value={senderNumber}
+                        onChange={(e) => setSenderNumber(e.target.value)}
+                        placeholder="01XXXXXXXXX"
+                        className="h-12 rounded-xl border-muted/20 bg-background/50"
+                      />
                     </div>
-                    <Button
-                      onClick={handleManualSubmit}
-                      disabled={submittingManual}
-                      className="w-full h-14 rounded-xl bg-emerald-600 text-white hover:bg-emerald-700 transition-all font-black uppercase text-[10px] tracking-[0.2em]"
-                    >
-                      {submittingManual ? <Loader2 className="animate-spin" /> : "Confirm Submission"}
-                    </Button>
-                 </div>
+                  </div>
+                  <Button
+                    onClick={handleManualSubmit}
+                    disabled={submittingManual}
+                    className="w-full h-14 rounded-xl bg-emerald-600 text-white hover:bg-emerald-700 transition-all font-black uppercase text-[10px] tracking-[0.2em]"
+                  >
+                    {submittingManual ? <Loader2 className="animate-spin" /> : t("gateway.confirmSubmit")}
+                  </Button>
+                </div>
               ) : (
                 <>
                   {summaryLoading ? (
@@ -271,15 +271,15 @@ export default function MonthlyDonationPage() {
                   ) : (
                     <>
                       <div className="flex justify-between items-center bg-emerald-500/5 p-2 sm:p-4 rounded-xl border border-emerald-500/10">
-                        <span className="text-[9px] sm:text-[10px] font-black text-emerald-600 uppercase tracking-widest">Income</span>
+                        <span className="text-[9px] sm:text-[10px] font-black text-emerald-600 uppercase tracking-widest">{t("gateway.income")}</span>
                         <span className="text-sm sm:text-lg font-black text-emerald-600 font-mono">৳{summary?.main?.totalIncome?.toLocaleString()}</span>
                       </div>
                       <div className="flex justify-between items-center bg-rose-500/5 p-2 sm:p-4 rounded-xl border border-rose-500/10">
-                        <span className="text-[9px] sm:text-[10px] font-black text-rose-600 uppercase tracking-widest">Expense</span>
+                        <span className="text-[9px] sm:text-[10px] font-black text-rose-600 uppercase tracking-widest">{t("gateway.expense")}</span>
                         <span className="text-sm sm:text-lg font-black text-rose-600 font-mono">৳{summary?.main?.totalExpense?.toLocaleString()}</span>
                       </div>
                       <div className="pt-2 sm:pt-4 text-center">
-                        <p className="text-[9px] sm:text-[10px] font-black text-muted-foreground uppercase tracking-widest">Balance</p>
+                        <p className="text-[9px] sm:text-[10px] font-black text-muted-foreground uppercase tracking-widest">{t("gateway.balance")}</p>
                         <p className="text-3xl sm:text-5xl font-black text-primary text-center font-mono leading-none drop-shadow-sm">৳{summary?.totalBalance?.toLocaleString()}</p>
                       </div>
                     </>
@@ -320,7 +320,7 @@ export default function MonthlyDonationPage() {
 
               <div className="flex items-center justify-center gap-2 py-2 text-[8px] sm:text-[9px] font-black text-muted-foreground uppercase tracking-widest">
                 <ShieldCheck size={14} className="text-emerald-500" />
-                Secured & Encrypted
+                {t("gateway.securedNote")}
               </div>
             </div>
           </Card>

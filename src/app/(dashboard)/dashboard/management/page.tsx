@@ -5,7 +5,6 @@ import {
   Plus,
   Edit2,
   Trash2,
-  ShieldCheck,
   Calendar,
   Briefcase,
 } from "lucide-react";
@@ -22,8 +21,11 @@ import { AFDataTable } from "@/components/shared/AFDataTable";
 import { AFModal } from "@/components/shared/AFModal";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
+import { useTranslation } from "react-i18next";
 
 export default function ManagementPage() {
+  const { t } = useTranslation();
+
   //====================== STATE ======================
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
@@ -55,12 +57,12 @@ export default function ManagementPage() {
   };
 
   const handleDelete = async (id: string) => {
-    if (confirm("Are you sure you want to remove this appointment?")) {
+    if (confirm(t("management.deleteConfirm"))) {
       try {
         await deleteManagement(id).unwrap();
-        toast.success("Management record deleted");
+        toast.success(t("management.deleteSuccess"));
       } catch {
-        toast.error("Delete failed");
+        toast.error(t("management.deleteError"));
       }
     }
   };
@@ -73,7 +75,7 @@ export default function ManagementPage() {
   //====================== TABLE ======================
   const columns = [
     {
-      header: "Leadership Profile",
+      header: t("management.profileHeader"),
       cell: (m: any) => (
         <div className="flex items-center gap-3">
           <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center font-black text-xs uppercase">
@@ -82,14 +84,18 @@ export default function ManagementPage() {
           <div>
             <div className="font-bold text-sm">{m.name || m.userId?.name}</div>
             <div className="text-[10px] text-muted-foreground uppercase font-black">
-              {m.committeeType || 'GENERAL'}
+              {m.committeeType === "ADVISORY"
+                ? t("management.committeeAdvisory")
+                : m.committeeType === "INVESTIGATION"
+                ? t("management.committeeInvestigation")
+                : t("management.committeeGeneral")}
             </div>
           </div>
         </div>
       ),
     },
     {
-      header: "Position",
+      header: t("management.positionHeader"),
       cell: (m: any) => (
         <div className="flex items-center gap-1 text-xs font-bold">
           <Briefcase size={12} className="text-primary" />
@@ -98,7 +104,7 @@ export default function ManagementPage() {
       ),
     },
     {
-      header: "Tenure",
+      header: t("management.tenureHeader"),
       cell: (m: any) => (
         <div className="text-xs">
           {m.startAt
@@ -107,20 +113,20 @@ export default function ManagementPage() {
           →{" "}
           {m.endAt
             ? format(new Date(m.endAt), "MMM d, yyyy")
-            : "Present"}
+            : t("management.presentTenure")}
         </div>
       ),
     },
     {
-      header: "Status",
+      header: t("management.statusHeader"),
       cell: (m: any) => (
         <Badge variant={m.isActive ? "default" : "secondary"}>
-          {m.isActive ? "Active" : "Inactive"}
+          {m.isActive ? t("management.activeStatus") : t("management.inactiveStatus")}
         </Badge>
       ),
     },
     {
-      header: "Actions",
+      header: t("management.actionsHeader"),
       cell: (m: any) => (
         <div className="flex gap-2 justify-end">
           <Button size="icon" className="cursor-pointer" variant="ghost" onClick={() => handleEdit(m)}>
@@ -143,12 +149,12 @@ export default function ManagementPage() {
   return (
     <div className="space-y-6">
       <AFPageHeader
-        title="লিডারশিপ সেক্রেটারিয়েট"
-        description="ফাউন্ডেশনের নেতৃত্ব এবং শাসন পরিচালনা করুন"
+        title={t("management.title")}
+        description={t("management.description")}
         action={
           <Button className="cursor-pointer" onClick={() => setIsDialogOpen(true)}>
             <Plus className="mr-2 h-4 w-4" />
-            সদস্য নিয়োগ দিন
+            {t("management.addMember")}
           </Button>
         }
       />
@@ -159,21 +165,25 @@ export default function ManagementPage() {
           setSearchTerm(v);
           setPage(1);
         }}
-        searchPlaceholder="নাম বা পদবী দিয়ে খুঁজুন..."
+        searchPlaceholder={t("management.searchPlaceholder")}
       />
 
       <AFDataTable
         columns={columns}
         data={managements}
         isLoading={isLoading}
-        emptyMessage="কোন নেতৃত্ব রেকর্ড পাওয়া যায়নি"
+        emptyMessage={t("management.emptyMessage")}
       />
 
       {/* Pagination */}
       {meta && (
         <div className="flex justify-between items-center text-xs font-bold">
           <span>
-            পৃষ্ঠা {meta.page} এর {meta.totalPage} • মোট {meta.total} জন
+            {t("management.pageOfMembers", {
+              page: meta.page,
+              totalPage: meta.totalPage,
+              total: meta.total,
+            })}
           </span>
           <div className="flex gap-2">
             <Button
@@ -181,14 +191,14 @@ export default function ManagementPage() {
               disabled={page === 1}
               onClick={() => setPage((p) => p - 1)}
             >
-              পূর্ববর্তী
+              {t("common.previous")}
             </Button>
             <Button
               size="sm"
               disabled={page === meta.totalPage}
               onClick={() => setPage((p) => p + 1)}
             >
-              পরবর্তী
+              {t("common.next")}
             </Button>
           </div>
         </div>
@@ -197,7 +207,7 @@ export default function ManagementPage() {
       <AFModal
         isOpen={isDialogOpen}
         onOpenChange={setIsDialogOpen}
-        title={editingManagement ? "নিয়োগ পরিবর্তন" : "নতুন নিয়োগ"}
+        title={editingManagement ? t("management.editTitle") : t("management.createTitle")}
       >
         <ManagementForm
           initialData={editingManagement}
