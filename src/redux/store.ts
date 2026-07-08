@@ -27,7 +27,7 @@ const rootReducer = combineReducers({
 
 // ===== Persist Config =====
 const persistConfig = {
-  key: "root",
+  key: "alhamdulillah-foundation-root",
   storage,
   whitelist: ["AFAuth"], // persist only these slices
 };

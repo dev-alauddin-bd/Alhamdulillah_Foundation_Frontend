@@ -26,9 +26,12 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
+import { selectCurrentToken } from "@/redux/features/auth/authSlice";
 
 export default function NoticePage() {
   const { t } = useTranslation();
+  const token = useSelector(selectCurrentToken);
   
   // ================= STATE =================
   const [search, setSearch] = useState("");
@@ -57,16 +60,20 @@ export default function NoticePage() {
 
     const formData = new FormData();
     formData.append("file", file);
-    formData.append(
-      "upload_preset",
-      process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET!,
-    );
 
     try {
       const res = await fetch(
-        `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/upload`,
-        { method: "POST", body: formData },
+        `${process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000/api"}/upload`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        },
       );
+
+      if (!res.ok) throw new Error("Upload failed");
 
       const data = await res.json();
       setFileUrl(data.secure_url);

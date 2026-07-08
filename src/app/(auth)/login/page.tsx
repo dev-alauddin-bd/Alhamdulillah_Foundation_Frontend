@@ -50,29 +50,6 @@ export default function LoginPage() {
     }
   };
 
-  const handleQuickLogin = async (emailVal: string, passwordVal: string) => {
-    setEmail(emailVal);
-    setPassword(passwordVal);
-    setError("");
-
-    try {
-      const res = await loginUser({ email: emailVal, password: passwordVal }).unwrap();
-
-      dispatch(
-        setUser({
-          user: res?.data?.user,
-          accessToken: res?.data?.accessToken,
-        })
-      );    
-      toast.success(res?.message || t("auth.login.successMessage", { defaultValue: "Login successful" }));
-      router.push("/dashboard");
-    } catch (err: any) {
-      const errMsg = err?.data?.message || t("auth.invalid");
-      setError(errMsg);
-      toast.error(errMsg);
-    }
-  };
-
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
       <Card className="w-full max-w-md p-8 rounded-3xl border border-border/50 bg-background/80 backdrop-blur-xl shadow-2xl">
@@ -144,55 +121,7 @@ export default function LoginPage() {
           </Button>
         </form>
 
-        {/* ===== QUICK DEMO LOGIN BUTTONS ===== */}
-        <div className="pt-6 border-t border-border/50 mt-6 text-center">
-          <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3">
-            ডেমো লগইন (Quick Fill)
-          </p>
-          <div className="grid grid-cols-2 gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => handleQuickLogin("super1@gmail.com", "123456")}
-              className="rounded-xl border-primary/20 text-xs font-bold hover:bg-primary/5 hover:text-primary transition-all flex items-center justify-center gap-1.5"
-            >
-              <span className="h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse"></span>
-              Super Admin
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => handleQuickLogin("admin@gmail.com", "123456")}
-              className="rounded-xl border-primary/20 text-xs font-bold hover:bg-primary/5 hover:text-primary transition-all flex items-center justify-center gap-1.5"
-            >
-              <span className="h-1.5 w-1.5 rounded-full bg-blue-500"></span>
-              Admin
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => handleQuickLogin("member@gmail.com", "123456")}
-              className="rounded-xl border-primary/20 text-xs font-bold hover:bg-primary/5 hover:text-primary transition-all flex items-center justify-center gap-1.5"
-            >
-              <span className="h-1.5 w-1.5 rounded-full bg-green-500"></span>
-              Member
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => handleQuickLogin("user@gmail.com", "123456")}
-              className="rounded-xl border-primary/20 text-xs font-bold hover:bg-primary/5 hover:text-primary transition-all flex items-center justify-center gap-1.5"
-            >
-              <span className="h-1.5 w-1.5 rounded-full bg-amber-500"></span>
-              User
-            </Button>
-          </div>
-        </div>
-        
+
         <div className="mt-8 text-center text-sm text-foreground/60">
           {t("auth.login.noAccount", { defaultValue: "Don't have an account?" })}{" "}
           <Link

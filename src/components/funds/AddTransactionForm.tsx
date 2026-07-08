@@ -1,12 +1,14 @@
 "use client";
 import { useState } from "react";
-import axios from "axios";
+import { useUploadFileMutation } from "@/redux/features/upload/uploadApi";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { X, Image as ImageIcon, Loader2 } from "lucide-react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useSelector } from "react-redux";
+import { selectCurrentToken } from "@/redux/features/auth/authSlice";
 
 interface AddTransactionFormProps {
   onAdd: (data: {
@@ -23,6 +25,8 @@ export const AddTransactionForm = ({
   onAdd,
   adding,
 }: AddTransactionFormProps) => {
+  const token = useSelector(selectCurrentToken);
+  console.log('AddTransactionForm: current token', token);
   const [txType, setTxType] = useState<"INCOME" | "EXPENSE">("INCOME");
   const [fundType, setFundType] = useState<"MAIN" | "WELFARE">("MAIN");
   const [txAmount, setTxAmount] = useState("");
@@ -35,40 +39,28 @@ export const AddTransactionForm = ({
     setEvidenceImages((prev) => prev.filter((_, i) => i !== index));
   };
 
+  const [uploadFile] = useUploadFileMutation();
+
   const uploadToCloudinary = async (files: File[]): Promise<string[]> => {
     const urls: string[] = [];
     setIsUploading(true);
     setUploadProgress(0);
-
     const totalFiles = files.length;
 
     for (let i = 0; i < totalFiles; i++) {
       const formData = new FormData();
       formData.append("file", files[i]);
-      formData.append(
-        "upload_preset",
-        process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET!,
-      );
 
       try {
-        const res = await axios.post(
-          `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
-          formData,
-          {
-            onUploadProgress: (progressEvent) => {
-              const filePercent = Math.round(
-                (progressEvent.loaded * 100) / (progressEvent.total || 1),
-              );
-              const overallPercent = Math.round(
-                (i * 100 + filePercent) / totalFiles,
-              );
-              setUploadProgress(overallPercent);
-            },
-          },
-        );
-        if (res.data.secure_url) urls.push(res.data.secure_url);
+        const { secure_url } = await uploadFile(formData).unwrap();
+        console.log(`Uploaded file ${i + 1}/${totalFiles}:`, secure_url);
+        urls.push(secure_url);
+        // Update progress manually (since RTK Query doesn't expose onUploadProgress)
+        const overallPercent = Math.round(((i + 1) * 100) / totalFiles);
+        console.log('Upload progress %:', overallPercent);
+        setUploadProgress(overallPercent);
       } catch (error) {
-        console.error("Cloudinary Error:", error);
+        console.error("Upload Error:", error);
         toast.error(`Failed to upload image ${i + 1}`);
       }
     }
@@ -83,10 +75,12 @@ export const AddTransactionForm = ({
     }
 
     try {
-      const imageUrls =
-        evidenceImages.length > 0
-          ? await uploadToCloudinary(evidenceImages)
-          : [];
+      console.log('Submitting transaction, evidence count:', evidenceImages.length);
+        const imageUrls =
+          evidenceImages.length > 0
+            ? await uploadToCloudinary(evidenceImages)
+            : [];
+        console.log('Image URLs after upload:', imageUrls);
 
       await onAdd({
         type: txType,
@@ -97,6 +91,7 @@ export const AddTransactionForm = ({
       });
 
       toast.success("Transaction added successfully!");
+        console.log('Transaction submitted successfully with data:', { type: txType, fundType, amount: Number(txAmount), reason: txReason, evidenceImages: imageUrls });
 
       setTxAmount("");
       setTxReason("");
@@ -230,7 +225,9 @@ export const AddTransactionForm = ({
                   accept="image/*"
                   onChange={(e) => {
                     if (e.target.files) {
-                      setEvidenceImages((prev) => [...prev, ...Array.from(e.target.files!)]);
+                      const newFiles = Array.from(e.target.files!);
+                      console.log('Selected evidence files:', newFiles.map(f => f.name));
+                      setEvidenceImages((prev) => [...prev, ...newFiles]);
                       e.target.value = "";
                     }
                   }}

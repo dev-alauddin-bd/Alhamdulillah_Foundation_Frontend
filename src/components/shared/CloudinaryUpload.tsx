@@ -1,11 +1,9 @@
 "use client";
 
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Upload, X, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { useSelector } from "react-redux";
-import { selectCurrentToken } from "@/redux/features/auth/authSlice";
+import { useUploadFileMutation } from "@/redux/features/upload/uploadApi";
 
 interface CloudinaryUploadProps {
   onUploadSuccess: (url: string) => void;
@@ -20,41 +18,22 @@ export default function CloudinaryUpload({
   value,
   label = "Upload Image",
 }: CloudinaryUploadProps) {
-  const [uploading, setUploading] = useState(false);
-  const token = useSelector(selectCurrentToken);
+  const [uploadFile, { isLoading: uploading }] = useUploadFileMutation();
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    setUploading(true);
     const formData = new FormData();
     formData.append("file", file);
-    formData.append(
-      "upload_preset",
-      process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "",
-    );
 
     try {
-      const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
-      const response = await fetch(
-        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
-        {
-          method: "POST",
-          body: formData,
-        },
-      );
-
-      if (!response.ok) throw new Error("Upload failed");
-
-      const result = await response.json();
+      const result = await uploadFile(formData).unwrap();
       onUploadSuccess(result.secure_url);
       toast.success("Image uploaded successfully");
     } catch (error) {
       console.error("Upload Error:", error);
       toast.error("Failed to upload image");
-    } finally {
-      setUploading(false);
     }
   };
 
